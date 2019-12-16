@@ -1,0 +1,71 @@
+.bounceTop-enter-active
+  animation bounceTop .35s both
+
+@keyframes bounceTop
+  0%
+    transform translateY(-50px)
+    animation-timing-function ease-in
+    opacity 0
+  38%
+    transform translateY(2px)
+    animation-timing-function ease-out
+    opacity 1
+  55%
+    transform translateY(-12px)
+    animation-timing-function ease-in
+  81%
+    transform translateY(-5px)
+    animation-timing-function ease-in
+  95%
+    transform translateY(-1px)
+    animation-timing-function ease-in
+  72%, 90%
+    transform translateY(1px)
+    animation-timing-function ease-out
+  100%
+    transform translateY(0)
+    animation-timing-function ease-out
+
+.subExpander
+  user-select none
+  &__trigger
+    display flex
+    justify-content space-between
+    align-items center
+    //
+    border-bottom 1px solid #dee2e6 // - 20
+    cursor pointer
+    padding .5em
+    position relative
+    z-index 1
+    background #FFF
+    &:hover
+      border-bottom 1px solid rgba(#ff9800, .7)
+      // border-bottom-color #2196f3
+    // &.open
+    // background #fffafa // rgba(#444, .5)
+    &-Icon
+      transition transform .2s cubic-bezier(.23, 1, .32, 1)
+      &.open
+        stroke rgba(#ff9800, .7) // tomato // #ed5565 // tomato
+        transform rotate(180deg)
+  &__list
+    padding-left 2px
+    background #FFF
+    // font-size .9em
+    .accessAction
+      display inline-block
+      margin 1em 1em 2em
+
+.level_2
+  border-left 4px solid rgba(#ff9800, .7)
+  // border-bottom 1px solid rgba(#ff9800, .7)
+  .subExpander__trigger
+    background #f9f0e2 + 10
+    // border-bottom 1px solid #dee2e6
+  .level_2
+    .subExpander__trigger
+      background #f9f0e2
+      color #000
+      &-Icon.open
+        stroke #ff9800 // rgba(#ff9800, .7)

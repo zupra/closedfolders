@@ -1,0 +1,192 @@
+.nowrap, th
+  white-space nowrap
+
+.vgt-wrap
+  position relative // for loading
+
+.vgt-loading
+  position absolute
+  z-index 10
+  left 50%
+  // top 50%
+  transform translate(-50%, -50%)
+  color #ec4758
+  font-size 3em
+
+.is-loading
+  filter blur(5px)
+
+.sorting
+  background #EEE
+  border-bottom-color #3abaae
+  &:after
+    color #26a69a
+    // content "⇅ "
+  &-desc
+    &:after
+      content " ⬆ "
+  &-asc
+    &:after
+      content " ⬇ "
+
+// FOOTER
+.vgt-wrap__footer
+  display flex
+  justify-content space-between
+  background #EEE
+  padding .5em 1em
+
+.footer__navigation
+  margin-left 1em
+  display flex
+  align-items center
+  &__info
+    margin 0 1em
+  &__page-info
+    padding 0 1em
+  &__page-btn
+    outline none
+    text-decoration none
+    padding 0 1em
+    height 2em
+    border-radius .3em
+    display inline-flex
+    align-items center
+    justify-content center
+    box-shadow 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12)
+    cursor pointer
+    user-select none
+    transition background .3s
+    background #3498db
+    color #fff
+    // &:active
+    // transform translateY(2px)
+    &:hover
+      background #48acef
+
+Search()
+  padding-left 2.4em !important
+  background #FFF url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='13'><g stroke-width='2' stroke='blueviolet'><circle cx='5' cy='5'  r='4' style='fill:none;' /><line x1='9' y1='9' x2='13' y2='13' /></g></svg>") 1em 50% no-repeat
+
+// UTILS
+.vgt-global-search input
+  font-size 1em
+  Search()
+
+.filter-th input
+  // width 100%
+  min-width 100%
+  width 7em
+  Search()
+
+// margin-bottom 4px
+.vgt-responsive
+  clear both
+  margin-top 8px
+  /*
+  overflow auto
+  max-height 600px
+  outline 1px solid #dee2e6
+  resize vertical
+  */
+
+/*
+.vgt-table thead
+  tr:first-child th
+    background #c5c5c5 // #bcc7e0
+    position sticky
+    top 0
+    z-index 1
+*/
+/* TABLE
+mod конкретной table вместо глобального width 100%
+*/
+.VGT_100w .vgt-table
+  width 100%
+
+// ===========
+.vgt-table
+  // !!!
+  // width 100%  -> .w_100
+  // !!!
+  font-family "Roboto Condensed", sans-serif
+  td, th
+    border-right 1px solid #dee2e6
+    &:last-child
+      border-right 0
+  th
+    cursor pointer
+    user-select none
+    span:before
+      content "⇅ " // ⬍
+    &:hover
+      border-bottom-color #C7CEDE
+  tbody
+    tr
+      &:nth-child(even)
+        background ghostwhite
+      &:hover
+        background #fffce1 // lavender // #FFF
+        outline 2px solid #ff9800
+        outline-offset -2px
+        color #444
+
+// >>> UTILS for EL
+
+// 10 rows selected +clear
+.vgt-selection-info-row
+  position absolute
+  right 0
+  top 0
+  display flex
+  align-items center
+  a
+    margin 0 .5em
+
+.VGT_rightBlock
+  float right
+  position relative
+  z-index 1
+
+.img_hoverScale
+  width 32px
+  position relative
+  transition transform .3s
+  &:hover
+    z-index 1
+    transform scale(4)
+    outline 1px solid #3498db
+
+.vgt_TextOverflow
+  max-width 20vw
+  white-space nowrap
+  overflow hidden
+  text-overflow ellipsis
+
+// FOR draggable
+// .VgtDragCol,
+.draggable
+  counter-reset idx
+  /*
+                    // СЧЁТЧИКИ (сказали спрятать)
+
+                    label
+                      position relative
+                      &:before
+                        position absolute
+                        z-index 1
+                        counter-increment idx
+                        content counter(idx)
+                        line-height 1
+                        border-radius 1em
+                        font-size .7rem
+                        left 0
+                        top -.3em
+                        background #ffeb3b
+                        padding .1rem .3rem
+                    */
+  span
+    cursor grab !important
+  .sortable-chosen
+    background #ffeb3b
+    cursor grabbing

@@ -1,0 +1,57 @@
+// iOS:fix remove shadow | appearance:none - нужны (color, date, time, month, ...etc)
+input, textarea
+  background-clip padding-box
+
+// FF:fix Убираем рамку в фокусе
+button::-moz-focus-inner
+  border 0
+
+select:not([multiple]):-moz-focusring
+  color transparent
+  text-shadow 0 0 0 #000
+
+[type="search"]
+  -webkit-appearance textfield
+
+[type="color"]
+  height 3em
+  background transparent
+  border 0
+  cursor pointer
+
+[type="file"]
+  cursor pointer
+  background-color #FFF
+  padding .5em !important
+  height auto !important
+
+[type="time"]
+  padding-right 0 !important
+
+[readonly]
+  background #ebebeb
+  border 1px solid #568DA6
+
+/*
+[type="number"]
+  -moz-appearance: textfield;
+[type=number]::-webkit-inner-spin-button,
+[type=number]::-webkit-outer-spin-button
+  -webkit-appearance: none
+  margin: 0
+*/
+input::-webkit-inner-spin-button, input::-webkit-outer-spin-button
+  // vertical-align: middle
+  align-self center
+
+// .disabled, 
+[disabled]
+  pointer-events none
+  opacity .4
+  box-shadow none
+
+textarea
+  // min-height 6em
+  height initial
+  padding .7em 1em !important
+  resize vertical

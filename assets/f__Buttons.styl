@@ -1,0 +1,128 @@
+// === BUTTON ===
+$CLR()
+  &.red
+    background $red
+    &:hover
+      background $red - 35
+  &.green
+    background $green
+    &:hover
+      background $green - 35
+  &.orange
+    background $orange
+    &:hover
+      background $orange - 35 // #eea236 - 10
+
+$fill_Mod()
+  &.fill
+    &.lite
+      color $link
+      background #FFF //snow
+      &:hover
+        text-decoration underline
+    $CLR()
+
+$flat_Mod()
+  &.flat
+    // reset
+    background-color transparent
+    box-shadow none
+    color #444
+    text-transform uppercase
+    font-weight 500
+    &:hover
+      background rgba(#777, .2)
+    &.blue
+      color $blue
+      &:hover
+        background rgba($blue, .2)
+    &.red
+      color $red
+      &:hover
+        background rgba($red, .2)
+    &.green
+      color $green
+      &:hover
+        background rgba($green, .2)
+    &.orange
+      color $orange
+      &:hover
+        background rgba($orange, .2)
+
+$outline_Mod()
+  &.outline
+    // border 2px solid currentColor
+    // border .16em solid currentColor
+    border 1px solid currentColor
+    transition none // background 0.3s
+    background #FFF // snow
+    color #546e7a
+    &:hover
+      color #FFF !important
+      border-color transparent
+      background #37474f
+    &.blue
+      color $blue - 30
+      &:hover
+        background $blue
+    &.red
+      color $red - 30
+      &:hover
+        background $red
+    &.green
+      color $green - 30
+      &:hover
+        background $green
+    &.orange
+      color $orange - 30
+      &:hover
+        background $orange
+
+// base
+.btn_icon, .btn
+  // vertical-align middle
+  // display inline-block
+  white-space nowrap
+  text-decoration none
+  &.rounded
+    border-radius 2em
+
+.btn_icon,
+.btn,
+button
+  display inline-flex
+  align-items center
+  justify-content center
+  $shadow_button()
+  cursor pointer
+  user-select none
+  transition background .3s
+  // base default
+  background $blue
+  color #FFF
+  &:hover
+    background $blue - 20%
+  // &:active
+  //   transform translateY(2px)
+
+.btn_icon
+  background $blue // #3498db
+  margin-right 4px
+  border-radius .3em
+  padding 4px
+  $CLR()
+
+.btn, button
+  font-weight normal // reset inherit
+  border 1px solid transparent
+
+  $fill_Mod()
+  $flat_Mod()
+  $outline_Mod()
+  $size_Mod()
+
+// icon
+.btn,
+button
+  .icon
+    margin-right .5em

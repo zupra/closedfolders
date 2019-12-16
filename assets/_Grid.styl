@@ -1,0 +1,68 @@
+// Grid !TODO
+
+// http://tpverstak.ru/grid/
+
+.col
+  flex 1
+
+$MW = 600px
+
+.Flex_wr
+  margin-bottom 1em
+
+@media (min-width: $MW)
+  .Flex_wr
+    display flex
+    flex-wrap wrap
+    // flex-direction: row
+    // align-content: flex-start
+  .fr
+    flex 1
+  .fr_25
+    flex 2.5
+  .fr_75
+    flex 7.5
+  .fr_50
+    flex 5
+  .w_50
+    width calc(50% - 1rem)
+
+
+.w_100
+  width 100%
+
+.flex_col
+  flex-direction column
+
+.flex_col, .flex
+  display flex
+
+.x_start
+  justify-content flex-start
+
+.x_end
+  justify-content flex-end
+
+.x_center
+  justify-content center
+
+.x_se
+  justify-content space-evenly
+
+.x_sb
+  justify-content space-between
+
+.x_base
+  align-items baseline
+
+.y_center
+  align-items center
+
+.y_start
+  align-items flex-start
+
+.y_end
+  align-items flex-end
+
+.y_base
+  align-items baseline

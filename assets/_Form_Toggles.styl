@@ -1,0 +1,100 @@
+
+.button-group, .checked-block
+  font-size .8em
+  $shadow_button()
+  display inline-flex
+  background #FFF
+  border-radius .3em
+
+.button-group
+  .btn
+    // RESET
+    border-color transparent
+    box-shadow none
+    border-radius 0
+    // height: 2.5em; //fix h100%
+    font-size inherit
+    &:first-child
+      border-radius .3em 0 0 .3em
+    &:last-child
+      border-radius 0 .3em .3em 0
+  .btn + .btn
+    border-left 1px solid #dee2e6 // rgba(#FFF, .3)
+
+// CHECKBOX/RADIO
+.checked, .checked-block, .checked-group
+  input[type="checkbox"], input[type="radio"]
+    pointer-events none
+    display none
+    &:checked ~ span
+      background $blue
+      border-color $blue - 50 // rgba(#FFF, .4) transparent
+      color #FFF
+  span
+    &:active
+      transform translateY(2px)
+    // box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+    cursor pointer
+    // display inline-block
+
+.checked-group, .checked
+  font-size .8rem
+  span
+    $shadow_button()
+    color #999
+    border 2px solid currentColor
+    border-radius 2em
+    line-height 2
+    padding 0 1em
+    display inline-flex
+
+.checked-group span
+  margin 2px
+
+// ######## как button-group только для checked_EL  ########
+.checked-block
+  display inline-flex
+  // &.lg
+  // font-size 1rem
+  // &.xl
+  // font-size 1.2rem
+  label
+    display flex
+    align-items stretch
+    &:first-of-type span
+      border-radius .3em 0 0 .3em
+    &:last-of-type span
+      border-radius 0 .3em .3em 0
+  label + label
+    border-left 1px solid #dee2e6
+  span
+    margin auto
+    padding 0 .7em
+    line-height 2em
+
+// BIG FILTER
+.checked-group.compacted
+  span
+    color #477dca // #3498db // #4281a4 // #607d8b
+    margin 1px
+    border-radius .2em
+    border 1px solid currentColor
+
+
+
+/*
+.checked-group_label
+  font-size .8rem
+  display inline-block
+  line-height 2
+  padding 0 1em
+  margin-right 1px
+  border 1px solid currentColor
+  border-radius 1em 0 0 1em
+  // font-family "Roboto Condensed", sans-serif
+  &.clicked
+    user-select none
+    cursor pointer
+    box-shadow 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12)
+    color #477dca // #4281a4
+*/

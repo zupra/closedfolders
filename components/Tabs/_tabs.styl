@@ -1,0 +1,51 @@
+.tab-enter-active
+  transition all .4s ease
+
+.tab-enter
+  opacity 0
+  transform translateY(10px)
+
+.tab-enter-to
+  opacity 1
+
+.tab-leave-active
+  display none
+  // opacity: 0;
+
+.HERE_tabs
+  // box-shadow: 0 8px 10px -5px rgba(#000, .2)
+  box-shadow 0 3px 5px rgba(#C7CEDE, .3)
+
+.tabList
+  user-select: none
+  display flex
+  background #dee2e6
+  box-shadow inset 0 -2px 5px rgba(#C7CEDE, .5)
+  text-transform uppercase
+
+  li+li
+    border-left 1px solid #C7CEDE
+
+  li:last-child
+    border-right 1px solid #C7CEDE
+
+  li
+    // flex 1
+    text-align center
+    cursor pointer
+    padding .7rem 2rem
+    // border-bottom: 2px solid #EEE;
+    font-weight bold
+    color #568DA6
+
+    &.curr
+      background #FFF
+      color #477dca
+      border-top 2px solid #ed5565
+      // box-shadow: inset 0 2px 0 $red;
+      // background #FFF
+
+.TAB_content
+  padding 1rem
+  background #FFF
+  // box-shadow: 0 5px 10px rgba(#000, .2)

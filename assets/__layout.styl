@@ -1,0 +1,100 @@
+$zIndex = 10
+
+.slideSidebar-enter-active, .slideSidebar-leave-active
+  transition transform .4s
+
+.slideSidebar-enter, .slideSidebar-leave-active
+  transform translateX(-100%) // - 24em
+
+.scrollableArea
+  height 100%
+  overflow-y auto
+  // overflow-y: scroll;
+  -webkit-overflow-scrolling touch
+  // хром, сафари
+  &::-webkit-scrollbar
+    width 0
+  // ie 10+
+  &
+    -ms-overflow-style none
+
+#layout
+  display flex
+
+#sidebar, #main
+  height 100vh
+
+#main
+  // !!!
+  // min-width: 375px;
+  flex 1
+  width 100%
+  overflow hidden
+  background #f7f7f7
+  // @media (max-width: 800px)
+
+// TopBar
+#topNav
+  box-shadow 0px 2px 4px -1px rgba(0, 0, 0, .2), 0px 4px 5px 0px rgba(0, 0, 0, .14), 0px 1px 10px 0px rgba(0, 0, 0, .12)
+  position fixed
+  top 0
+  left 0
+  // position: sticky;
+  width 100%
+  z-index $zIndex + 1
+  height 44px
+  background #777
+  display flex
+  justify-content space-between
+  align-items center
+  padding-right 6px
+  // color #FFF
+
+#burger
+  display flex
+  &:hover
+    rect
+      fill #3c4858
+  svg
+    margin auto
+    cursor pointer
+    user-select none
+
+$sidebar()
+  @media (max-width: 800px)
+    position absolute
+  z-index $zIndex
+  width 220px
+  padding-top 44px // 3em
+  background $header
+  color $header_text
+  line-height 1
+  font-family "Roboto Condensed", sans-serif
+  // text-indent 1em
+  font-size 1.1rem
+
+#sidebar
+  $sidebar()
+  .link, a
+    color $header_text
+    text-decoration none
+    display block
+    // &:hover
+    // color #2196f3
+    &:hover
+      color #FFF
+  a, h3, h4
+    padding .5em
+    padding-left 1em
+  h3, h4
+    margin 0 0 .3rem
+  nav
+    padding 1em 0
+  .nuxt-link-exact-active
+    background #000 //#173342 // #6843B0 // rgba(#000, .3)
+    // text-decoration underline
+    color #FFF
+    font-weight bold
+  svg
+    vertical-align bottom // middle
+    fill currentColor

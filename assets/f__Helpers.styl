@@ -1,0 +1,74 @@
+// == helperS ==
+
+// helper-el
+legend
+  padding 0 .3em
+  font-family "Roboto Condensed", sans-serif
+
+fieldset
+  border 1px solid #dee2e6
+  padding .5rem 1rem // 1.4em 1.4em
+  margin 1em 0
+  @media (max-width: 400px)
+    padding 0
+    border 0
+    border-top 1px solid #dee2e6
+    legend
+      margin-left 2em
+
+label
+  user-select none
+  // cursor pointer
+  white-space nowrap
+  display inline-block
+  font-family "Roboto Condensed", sans-serif
+
+.field
+  position relative
+  // font-family "Roboto Condensed", sans-serif
+  display flex
+  flex-direction column
+  // align-items flex-start
+  margin-bottom 1rem
+  // line-height 1.4
+  &.center
+    align-items center
+  .info, .error
+    // z-index 1
+    position absolute
+    top 100%
+    font-size .8rem
+    // line-height 1.2
+  .error
+    left 1em
+    color #ed5565
+    &:before
+      position absolute
+      top 0
+      left -1.4em
+      content "😳"
+      font-size 1rem
+  .is-invalid
+    border-color #ed5565 !important
+
+
+
+
+
+// grouped_form_EL
+.form-group
+  display flex
+  flex-direction column
+  // align-items flex-start
+
+  // !FIXME
+  >*
+    // width 240px
+    margin-bottom 1em
+  label
+    display grid
+
+
+input
+  &:invalid
+    border-color #ed5565
