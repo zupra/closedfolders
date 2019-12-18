@@ -36,6 +36,7 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
+    '~plugins/vuex-persist.js',
     '~plugins/notification.js'
 
     // '~plugins/vue-socket.js'

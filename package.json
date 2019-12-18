@@ -17,7 +17,9 @@
     "@nuxtjs/svg-sprite": "^0.4.7",
     "nuxt": "^2.0.0",
     "nuxt-socket-io": "^1.0.5",
-    "vue-socket.io": "^3.0.7"
+    "vue-socket.io": "^3.0.7",
+    "vuedraggable": "^2.23.2",
+    "vuex-persist": "^2.2.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^1.0.1",

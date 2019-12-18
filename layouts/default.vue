@@ -7,7 +7,7 @@
         @click="",
         width='44',
         height='44',
-        stroke='#495057', 
+        stroke='#495057',
         stroke-width='4',
         stroke-linecap='round',
       )
@@ -53,7 +53,7 @@
     .flex.mt_4
       N-link.m_auto.flex.y_center(
         to="/"
-      ) 
+      )
         svg.icon.colored
           use(xlink:href='#archive')
         | &nbsp; closedfolders
@@ -66,8 +66,9 @@
 
     .subList(v-for="item in navInner")
       N-link.flex.y_start(
+        v-if="item.name !== 'LogOut'"
         :to="item.link"
-      ) 
+      )
         svg.icon.mr_3
           use(
             v-bind="{'xlink:href':`#${item.icon}`}"
@@ -75,10 +76,25 @@
         div {{item.name}}
 
 
+      a.flex.y_start(
+        href="#"
+        v-else
+        @click.prevent="$store.commit('persist/logOut');$router.push('/login')"
+      )
+        svg.icon.mr_3
+          use(
+            v-bind="{'xlink:href':`#${item.icon}`}"
+          )
+        div {{item.name}}
+
+
+
+
+
     .nav(v-for="item in nav")
       N-link.flex.y_start(
         to="/"
-      ) 
+      )
         svg.icon.mr_3
           use(
             v-bind="{'xlink:href':`#${item.icon}`}"
@@ -93,7 +109,7 @@
     <nuxt />
 
 
-  footer.px_3.footer.flex.y_center.x_sb 
+  footer.px_3.footer.flex.y_center.x_sb
     | © 2019 closedfolders
     nav
       N-link.ml_3(
@@ -1170,6 +1186,7 @@
 
 <script>
 export default {
+  middleware: ['login'],
   data() {
     return {
       socket: null,
@@ -1291,7 +1308,7 @@ scrollableArea()
   height: 100vh;
   overflow-x: hidden; // for hidden sidenav
   background #F5F9FC
-  
+
   // grid-template-columns: 100%; // Charts responsiveness won't work with fr units
   grid-template-columns: $width-sidenav 1fr //calc(100% - $width-sidenav);
 
@@ -1331,7 +1348,7 @@ scrollableArea()
 
 .main
   grid-area: main;
-  
+
 
 .footer
   grid-area: footer;
@@ -1340,7 +1357,7 @@ scrollableArea()
 
 .sidenav
   grid-area: sidenav;
-  // width: $width-sidenav; 
+  // width: $width-sidenav;
   background-color: $bg-sidenav;
   // transform: translateX(-245px);
   // transition: all .6s ease-in-out;

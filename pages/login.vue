@@ -16,14 +16,14 @@
     )
       center
         .H2 Already registered?
-        p enter your login and passpord 
+        p enter your login and passpord
           br
           | to access your files
 
       label.field email
         input.xl(
 
-          v-model="loginData.login", 
+          v-model="loginData.login",
           placeholder="email",
           name="email"
           autocomplete="on",
@@ -45,7 +45,7 @@
     form.TAB(key="1", v-show="TAB==1", @submit.prevent)
       center
         .H2 New user
-        p Fill this simple form 
+        p Fill this simple form
           br
           | to create personal account
 
@@ -54,7 +54,7 @@
       )
         label.field label
           input.lg(
-            
+
             placeholder="WTF"
           )
       .center
@@ -84,12 +84,20 @@ export default {
         `https://closedfolders.com/api/2/check_user?email=${this.loginData.login}&pass=${this.loginData.pass}`
       )
       const result = await response.json()
-      result.message
-        ? this.$notice('', JSON.stringify(result), 'error')
-        : this.$notice(result.token)
+
+      if (result.token) {
+        this.$notice(result.token)
+        this.$store.commit('persist/logIn', result.token)
+        this.$router.push('/')
+      } else {
+        this.$notice('', JSON.stringify(result), 'error')
+      }
+
+
+
       //- console.log('result:', JSON.stringify(result))
 
-      /** 
+      /**
       const params = new URLSearchParams()
       params.append('login', this.loginData.login)
       params.append('pass', this.loginData.pass)

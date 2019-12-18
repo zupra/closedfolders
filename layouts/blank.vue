@@ -9,6 +9,7 @@
 <script>
 import NOTICE from '~/components/NOTICE.vue'
 export default {
+  // middleware: ['login'],
   components: {
     NOTICE
   },
