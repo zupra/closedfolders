@@ -17,7 +17,7 @@ transition(name="rippleEffect")
           line(x1='7', y1='21', x2='21', y2='7')
     #closeAll(
       @click="Stack=[]"
-    ) Закрыть
+    ) Close All
 
     .Stack.ripple(
       @click.self="Stack=[]"
@@ -145,7 +145,7 @@ $info = #21b9bb
 
 .Notice
   cursor default
-  border-radius 5px
+  // border-radius 5px
   background #FFF
   padding .2em 0 1em 1em
   position relative
@@ -173,6 +173,8 @@ $info = #21b9bb
     border-left-color $success
   &.danger
     border-left-color $danger
+  &.error
+    border-left-color $danger
   &.warning
     border-left-color $warning
   &.primary
@@ -185,6 +187,8 @@ $info = #21b9bb
   &.success
     color $success
   &.danger
+    color $danger
+  &.error
     color $danger
   &.warning
     color $warning
