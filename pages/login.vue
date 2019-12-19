@@ -20,9 +20,8 @@
           br
           | to access your files
 
-      label.field email
+      label.field Your email
         input.xl(
-
           v-model="loginData.login",
           placeholder="email",
           name="email"
@@ -38,7 +37,8 @@
         )
 
       center.mt_4
-        .btn.xl.fill.green(
+        button.btn.xl.fill.green(
+          typ="submit"
           @click="login"
         ) Log in
 
@@ -50,15 +50,15 @@
           | to create personal account
 
       .flex_col(
-        v-for="It in [1,2,3,4]"
+        v-for="V,K in signUpData"
       )
-        label.field label
+        label.field Your {{K}}
           input.lg(
 
-            placeholder="WTF"
+            :placeholder="K"
           )
       .center
-        .btn.xl Create account
+        button.btn.xl Create account
 
 
 
@@ -75,7 +75,12 @@ export default {
         login: '',
         pass: ''
       },
-      accountData: {}
+      signUpData: {
+        name: '',
+        email: '',
+        password: '',
+        invite: ''
+      }
     }
   },
   methods: {
@@ -92,8 +97,6 @@ export default {
       } else {
         this.$notice('', JSON.stringify(result), 'error')
       }
-
-
 
       //- console.log('result:', JSON.stringify(result))
 
@@ -145,7 +148,6 @@ export default {
 //- @import "~@/components/Tabs/_tabs.styl"
 
 
-
 .tab-enter-active
   transition all .4s ease
 
@@ -160,6 +162,11 @@ export default {
   display none
 
 
+
+
+
+
+
 .tabList
   width 310px
   user-select: none
@@ -168,10 +175,8 @@ export default {
   box-shadow inset 0 -2px 5px rgba(#C7CEDE, .5)
   text-transform uppercase
 
-
   li+li
     border-left 1px solid #C7CEDE
-
 
   li
     //- flex 1
@@ -183,9 +188,6 @@ export default {
     &.curr
       background #FFF
 
-
-
-
 .tabList li
   &:nth-child(1)
     flex 1
@@ -193,10 +195,15 @@ export default {
     flex 2
 
 
+
+.HERE_tabs
+  //- background: rgba(40,57,101,.9);
+  box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
+
 .TAB_content
   padding 1em 2em 1.6em
   background #FFF
-
+  //- background:url(https://raw.githubusercontent.com/khadkamhn/day-01-login-form/master/img/bg.jpg)
 
 </style>
 

@@ -27,7 +27,7 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: '#47bac1' },
   /*
    ** Global CSS
    */
@@ -37,9 +37,8 @@ export default {
    */
   plugins: [
     '~plugins/vuex-persist.js',
-    '~plugins/notification.js'
-
-    // '~plugins/vue-socket.js'
+    '~plugins/notification.js',
+    '~plugins/socket.js'
   ],
   /*
    ** Nuxt.js dev-modules

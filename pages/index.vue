@@ -1,5 +1,32 @@
 <template lang="pug">
 .Page
+
+  hr
+  pre(
+    style="height:3em; overflow-y: auto;resize: vertical;"
+  ) {{socket}}
+  hr
+
+  //- template()
+
+  .file_list(
+    v-for="It in socket.message.folders"
+  )
+    .It.flex.y_start.mb_3
+
+      //- :src="require(`../static/color-svg/${It.icon}.svg`)"
+      img(
+        width="39px"
+        :src="`../color-svg/${It.icon}.svg`"
+      )
+      .ml_2
+        .text_x2 {{It.foldername}}
+        .text_s1 {{It.created}}
+
+
+
+  hr
+
   h1 Files
 
   .file_list(
@@ -22,6 +49,7 @@
 
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data() {
     return {
@@ -569,8 +597,19 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapState(['socket']),
+
+    folders() {
+      return (
+        this.socket.isConnected &&
+        this.$socket.sendObj({
+          cmd: 'folders'
+        })
+      )
+    }
   }
-  // methods: {}
 }
 </script>
 

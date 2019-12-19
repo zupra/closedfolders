@@ -1,26 +1,32 @@
 <template lang="pug">
 .Page
-  h1 Plans
 
-  .Flex_wr.x_center
-    .Card.m_2.p_3.center(
-      v-for="plan in plans"
-    )
-      .text_x2 {{plan.plan_name}}
-      div you can use 
-      div {{plan.storage}} Gb
-      .text_x3 
-        b {{plan.price}}&nbsp;
-        | $
-      //- pre {{plan}}
+
+  h1 Plans
+  //- pre {{socket}}
+  pre {{socket.message}}
+  //- .Flex_wr.x_center
+  //-   .Card.m_2.p_3.center(
+  //-     v-for="plan in plans"
+  //-   )
+  //-     .text_x2 {{plan.plan_name}}
+  //-     div you can use 
+  //-     div {{plan.storage}} Gb
+  //-     .text_x3 
+  //-       b {{plan.price}}&nbsp;
+  //-       | $
+  //-     //- pre {{plan}}
 
 
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data() {
     return {
+      /* 
+     
       plans: [
         {
           plan_id: '1',
@@ -75,6 +81,20 @@ export default {
           active: '1'
         }
       ]
+      */
+    }
+  },
+
+  computed: {
+    ...mapState(['socket']),
+
+    plans() {
+      return (
+        this.socket.isConnected &&
+        this.$socket.sendObj({
+          cmd: 'plans'
+        })
+      )
     }
   }
 }

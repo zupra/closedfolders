@@ -13,11 +13,8 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
-    "@nuxtjs/svg": "^0.1.6",
-    "@nuxtjs/svg-sprite": "^0.4.7",
     "nuxt": "^2.0.0",
-    "nuxt-socket-io": "^1.0.5",
-    "vue-socket.io": "^3.0.7",
+    "vue-native-websocket": "^2.0.13",
     "vuedraggable": "^2.23.2",
     "vuex-persist": "^2.2.0"
   },

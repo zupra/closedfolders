@@ -20,6 +20,8 @@
       placeholder="Search files..."
     )
 
+
+
     div
       .btn_icon.fill.green &nbsp;
         svg(
@@ -50,54 +52,66 @@
 
   aside.sidenav
 
+    .flex
+      input(v-model="foldername")
+      .btn(
+        @click="create_folder"
+      ) Folder
+
     .flex.mt_4
       N-link.m_auto.flex.y_center(
         to="/"
       )
         svg.icon.colored
-          use(xlink:href='#archive')
+          use(xlink:href='#archive', stroke-width="2", stroke="#47bac1")
         | &nbsp; closedfolders
 
 
 
 
+    .expand
 
-
-
-    .subList(v-for="item in navInner")
-      N-link.flex.y_start(
-        v-if="item.name !== 'LogOut'"
-        :to="item.link"
-      )
+      .flex.y_start
         svg.icon.mr_3
-          use(
-            v-bind="{'xlink:href':`#${item.icon}`}"
-          )
-        div {{item.name}}
+          use(xlink:href="#user")
+        div
+          div name
+          small.text_sm2 name
 
 
-      a.flex.y_start(
-        href="#"
-        v-else
-        @click.prevent="$store.commit('persist/logOut');$router.push('/login')"
-      )
-        svg.icon.mr_3
-          use(
-            v-bind="{'xlink:href':`#${item.icon}`}"
-          )
-        div {{item.name}}
+      .subList(v-for="item in navInner")
+        N-link.flex.y_start(
+          v-if="item.name !== 'LogOut'"
+          :to="item.link"
+        )
+          svg.icon.mr_3
+            use(
+              v-bind="{'xlink:href':`#${item.icon}`}"
+            )
+          div {{item.name}}
 
 
-
+        a.flex.y_start(
+          href="#"
+          v-else
+          @click.prevent="$store.commit('persist/logOut');$router.push('/login')"
+        )
+          svg.icon.mr_3
+            use(
+              v-bind="{'xlink:href':`#${item.icon}`}"
+            )
+          div {{item.name}}
 
 
     .nav(v-for="item in nav")
       N-link.flex.y_start(
         to="/"
       )
-        svg.icon.mr_3
+        svg.icon.mr_3(height="36px", width="36px")
           use(
             v-bind="{'xlink:href':`#${item.icon}`}"
+            stroke-width="2"
+            height="36px", width="36px"
           )
         div
           div {{item.name}}
@@ -107,6 +121,7 @@
 
   main.main
     <nuxt />
+
 
 
   footer.px_3.footer.flex.y_center.x_sb
@@ -1185,11 +1200,11 @@
 
 
 <script>
+import { mapState } from 'vuex'
 export default {
   middleware: ['login'],
   data() {
     return {
-      socket: null,
       nav: [
         {
           icon: 'inbox',
@@ -1243,32 +1258,22 @@ export default {
           name: 'LogOut',
           link: '/'
         }
-      ]
+      ],
+      foldername: ''
     }
   },
+  computed: {
+    ...mapState(['socket'])
+  },
 
-  mounted() {
-    this.socket = new WebSocket(
-      'wss://closedfolders.com:8000/?hash=deaa27daf0a77038727638a1794d8d6b2e6f766c'
-    )
-    this.socket.onopen = () => {
-      console.log('SOCKET', this.socket)
-      this.socket.onmessage = ({ data }) => {
-        // this.logs.push({ event: 'Recieved message', data })
-        console.log(data)
-      }
-      this.socket.send('123')
+  methods: {
+    create_folder() {
+      this.socket.isConnected &&
+        this.$socket.sendObj({
+          cmd: 'create_folder',
+          foldername: this.foldername
+        })
     }
-
-    // this.socket.send('123')
-
-    // this.socket = this.$nuxtSocket({
-    //   reconnection: true
-    // })
-    // this.socket = new WebSocket(
-    //   'wss://closedfolders.com:8000/?hash=8d8767faa2088be073db234408e6949aa4a940e7'
-    // )
-    // console.log('SOCKET', this.socket)
   }
 }
 </script>
@@ -1375,9 +1380,9 @@ scrollableArea()
   a
     color #ced4da
     padding 1em
-  .icon
-    width: 36px;
-    height: 36px;
+  // .icon
+  //   width: 36px;
+  //   height: 36px;
   small
     color #6c757d
 
@@ -1401,10 +1406,6 @@ scrollableArea()
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-
-.colored
-  stroke-width: 2;
-  stroke #47bac1
 
 
 #hamburger
