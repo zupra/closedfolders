@@ -7,52 +7,71 @@
   ) {{socket}}
   hr
 
+  .btn(@click="get_folder") get_folder
+
   //- template()
 
   .file_list(
     v-for="It in socket.message.folders"
   )
-    .It.flex.y_start.mb_3
+    .It.flex.x_sb.mb_3.p_2
+      .flex.y_start
+        //- :src="require(`../static/color-svg/${It.icon}.svg`)"
+        img(
+          width="39px"
+          :src="`../color-svg/${It.icon}.svg`"
+        )
+        .ml_2
+          .text_x2 {{It.foldername}}
+          .text_s1 {{It.created}}
 
-      //- :src="require(`../static/color-svg/${It.icon}.svg`)"
-      img(
-        width="39px"
-        :src="`../color-svg/${It.icon}.svg`"
-      )
-      .ml_2
-        .text_x2 {{It.foldername}}
-        .text_s1 {{It.created}}
+      Dropdown(openTo="toLeft")
+        .btn.outline(slot="btn") btns
+        .p_3
 
+          .btn(
+            @click="delete_folder(It.folder_id)"
+          )
+          .btn.mb_1(
+            v-for="btn in It.btns"
+          ) {{btn}}
 
 
   hr
 
-  h1 Files
+  //-
+    h1 Files
 
-  .file_list(
-    v-for="file in files"
-  )
-    .file.flex.y_start.mb_3
-      img(
-        src="https://icongr.am/clarity/file.svg?size=48px"
-      )
-      div
-        .text_x2 {{file.filename}}
-        .text_s1 {{file.size}} - {{file.created}}
-        .flex
-          .badge(v-for="tag in file.tags") {{tag.tagname}}
+    .file_list(
+      v-for="file in files"
+    )
+      .file.flex.y_start.mb_3
+        img(
+          src="https://icongr.am/clarity/file.svg?size=48px"
+        )
+        div
+          .text_x2 {{file.filename}}
+          .text_s1 {{file.size}} - {{file.created}}
+          .flex
+            .badge(v-for="tag in file.tags") {{tag.tagname}}
 
 
 
 
 </template>
 
-
 <script>
 import { mapState } from 'vuex'
+import Dropdown from '~/components/Dropdown/Dropdown.vue'
+
+
 export default {
+  components: {
+    Dropdown
+  },
   data() {
     return {
+      /*
       files: [
         {
           file_id: 51,
@@ -595,9 +614,14 @@ export default {
           link:
             'https://filezzz_upload.cdn.zerocdn.com/7233cd93f0a55fbd4e241ff1ce224afb:2019121812:uid-16/files/ac54032ea4e8eef9841eb6b9e221bc190096cccc/Anna_Karenina_2012_BD_(Eng).mp4'
         }
-      ]
+      ] */
     }
   },
+  // watch: {
+  //   socket(newVal) {
+  //     if (newVal) alert(newVal)
+  //   }
+  // },
   computed: {
     ...mapState(['socket']),
 
@@ -609,6 +633,22 @@ export default {
         })
       )
     }
+  },
+  methods: {
+    get_folder() {
+      this.$socket.sendObj({
+        cmd: 'folders'
+      })
+    },
+    delete_folder(id) {
+      this.$socket.sendObj({
+        cmd: 'delete_folder',
+        folder_id: id
+      })
+      this.$socket.sendObj({
+        cmd: 'folders'
+      })
+    }
   }
 }
 </script>
@@ -618,7 +658,8 @@ export default {
 <style lang="stylus" scoped>
 // .file_list
 
-.file
+.It
+  cursor: pointer
   &:hover
     background: #f3f3f3;
 

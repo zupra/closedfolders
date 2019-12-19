@@ -1,6 +1,23 @@
 <template lang="pug">
 .grid
 
+
+  Modal(
+    :show.sync="showModal",
+    mod="SM toCenter",
+    title="add new Folder"
+  )
+    p add new Folder
+    .flex_col
+      input.xl(
+        v-model="foldername"
+        placeholder="foldername"
+      )
+    .flex.x_end.y_center(slot="actions")
+      .btn.lg(
+        @click="create_folder(); showModal_newClub = false"
+      ) new Folder
+
   header.header.flex.x_sb.y_center.px_3
 
     svg#hamburger(
@@ -16,6 +33,9 @@
         path(d='M8,30 L24,30')
 
 
+
+    b {{socket.isConnected}}
+
     input.lg.Search(
       placeholder="Search files..."
     )
@@ -23,7 +43,9 @@
 
 
     div
-      .btn_icon.fill.green &nbsp;
+      .btn_icon.fill.green(
+        @click="showModal = true"
+      ) &nbsp;
         svg(
           stroke="#FFF",
           stroke-width="2",
@@ -51,12 +73,6 @@
 
 
   aside.sidenav
-
-    .flex
-      input(v-model="foldername")
-      .btn(
-        @click="create_folder"
-      ) Folder
 
     .flex.mt_4
       N-link.m_auto.flex.y_center(
@@ -1197,14 +1213,19 @@
 
 </template>
 
-
-
 <script>
 import { mapState } from 'vuex'
+import Modal from '~/components/Modal/Modal.vue'
+
+
 export default {
   middleware: ['login'],
+  components: {
+    Modal
+  },
   data() {
     return {
+      showModal: false,
       nav: [
         {
           icon: 'inbox',
@@ -1268,11 +1289,16 @@ export default {
 
   methods: {
     create_folder() {
-      this.socket.isConnected &&
+      if (this.socket.isConnected) {
         this.$socket.sendObj({
           cmd: 'create_folder',
           foldername: this.foldername
         })
+
+        this.$socket.sendObj({
+          cmd: 'folders'
+        })
+      }
     }
   }
 }

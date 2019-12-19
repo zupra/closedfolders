@@ -7,9 +7,9 @@ export default ({ store }) => {
     `wss://closedfolders.com:8001/?hash=${store.state.persist.token}`,
     {
       store: store,
-      format: 'json',
+      // format: 'json',
       reconnection: true,
-      reconnectionAttempts: 5
+      // reconnectionAttempts: 5
     }
   )
 }
