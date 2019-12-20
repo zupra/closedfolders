@@ -83,60 +83,27 @@ export default {
       }
     }
   },
+  created() {
+    console.log('######socket', this.$socket)
+  },
   methods: {
     async login() {
       const response = await fetch(
-        `https://closedfolders.com/api/2/check_user?email=${this.loginData.login}&pass=${this.loginData.pass}`
+        `https://closedfolders.com/api/2/users_check?email=${this.loginData.login}&pass=${this.loginData.pass}`
       )
       const result = await response.json()
 
       if (result.token) {
-        this.$notice(result.token)
-        this.$store.commit('persist/logIn', result.token)
-        this.$router.push('/')
+        //- this.$store.commit('persist/logIn', result.token)
+        console.log(result.token)
+        localStorage.token = result.token
+
+        //- this.$options.sockets.onopen = () => location.replace('/')
+
+        location.replace('/')
       } else {
-        this.$notice('', JSON.stringify(result), 'error')
+        this.$notice('', result.message.text, 'error')
       }
-
-      //- console.log('result:', JSON.stringify(result))
-
-      /**
-      const params = new URLSearchParams()
-      params.append('login', this.loginData.login)
-      params.append('pass', this.loginData.pass)
-
-      const { data } = await this.$axios.$post(
-        'https://closedfolders.com/api/2/check_user',
-        params,
-        {
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-          }
-        }
-      )
-      console.log(data)
-      */
-
-      /*
-      *
-      const formData = new FormData()
-      formData.append('login', this.loginData.login)
-      formData.append('pass', this.loginData.pass)
-      try {
-        const response = await fetch(
-          'https://closedfolders.com/api/2/check_user',
-          {
-            method: 'POST',
-            //- headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData
-          }
-        )
-        const result = await response.json()
-        console.log('Успех:', JSON.stringify(result))
-      } catch (error) {
-        console.error('Ошибка:', error)
-      }
-      */
     }
   }
 }
@@ -160,8 +127,6 @@ export default {
 
 .tab-leave-active
   display none
-
-
 
 
 

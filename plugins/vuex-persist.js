@@ -7,3 +7,12 @@ export default ({ store }) => {
     // storage: sessionStorage
   }).plugin(store)
 }
+
+// export default ({ store }) => {
+//   window.onNuxtReady(() => {
+//     new VuexPersistence({
+//       key: 'persist',
+//       modules: ['persist']
+//     }).plugin(store)
+//   })
+// }

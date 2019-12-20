@@ -37,9 +37,9 @@ export default {
    */
   plugins: [
     '~plugins/vuex-persist.js',
-    // '~plugins/click-outside.js',
-    '~plugins/notification.js',
     '~plugins/socket.js',
+    '~plugins/click-outside.js',
+    '~plugins/notification.js'
   ],
   /*
    ** Nuxt.js dev-modules

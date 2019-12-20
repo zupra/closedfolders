@@ -1,9 +1,8 @@
 <template lang="pug">
 .grid
 
-
   Modal(
-    :show.sync="showModal",
+    :show.sync="showModal_folderCreate",
     mod="SM toCenter",
     title="add new Folder"
   )
@@ -15,13 +14,31 @@
       )
     .flex.x_end.y_center(slot="actions")
       .btn.lg(
-        @click="create_folder(); showModal_newClub = false"
+        @click="folder_create(); showModal_folderCreate = false"
       ) new Folder
+
+
+
+  Modal(
+    :show.sync="showModal_fileUpload",
+    mod="toCenter",
+    title="add new File"
+  )
+    p add new File
+      <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone>
+    .flex.x_end.y_center(slot="actions")
+      .btn.lg(
+        @click="showModal_fileUpload = false"
+      ) file Upload
+
+
 
   header.header.flex.x_sb.y_center.px_3
 
+
+
     svg#hamburger(
-        @click="",
+        @click="showSidebar = !showSidebar",
         width='44',
         height='44',
         stroke='#495057',
@@ -33,18 +50,13 @@
         path(d='M8,30 L24,30')
 
 
-
-    b {{socket.isConnected}}
-
     input.lg.Search(
       placeholder="Search files..."
     )
 
-
-
     div
       .btn_icon.fill.green(
-        @click="showModal = true"
+        @click="showModal_folderCreate = true"
       ) &nbsp;
         svg(
           stroke="#FFF",
@@ -56,7 +68,10 @@
           use(xlink:href='#folder-plus')
         | &nbsp; add Folder &nbsp;
 
-      .btn_icon &nbsp;
+      .btn_icon(
+        @click="showModal_fileUpload = true"
+
+      ) &nbsp;
         svg(
           stroke="#FFF",
           stroke-width="2",
@@ -69,12 +84,20 @@
 
 
 
+  //- transition(name="slideSidebar")
+  aside.sidebar(
+    :class="{show:showSidebar}"
+  )
+    .clickedArea(
+      @click="showSidebar = !showSidebar",
+    )
+
+    center
+      div socket connected:
+        b {{socket.isConnected}}
 
 
-
-  aside.sidenav
-
-    .flex.mt_4
+    .flex.my_3
       N-link.m_auto.flex.y_center(
         to="/"
       )
@@ -94,7 +117,6 @@
           div name
           small.text_sm2 name
 
-
       .subList(v-for="item in navInner")
         N-link.flex.y_start(
           v-if="item.name !== 'LogOut'"
@@ -106,11 +128,10 @@
             )
           div {{item.name}}
 
-
         a.flex.y_start(
           href="#"
           v-else
-          @click.prevent="$store.commit('persist/logOut');$router.push('/login')"
+          @click.prevent="$store.commit('SOCKET_ONCLOSE');$router.push('/login')"
         )
           svg.icon.mr_3
             use(
@@ -124,6 +145,8 @@
         to="/"
       )
         svg.icon.mr_3(height="36px", width="36px")
+          //- v-bind="{'xlink:href':`#${item.icon}`}"
+          v-bind="{'xlink:href':`../static/svg_sprite/feaver.svg#inbox`}"
           use(
             v-bind="{'xlink:href':`#${item.icon}`}"
             stroke-width="2"
@@ -140,7 +163,7 @@
 
 
 
-  footer.px_3.footer.flex.y_center.x_sb
+  footer.footer.px_3.flex.y_center.x_sb
     | © 2019 closedfolders
     nav
       N-link.ml_3(
@@ -1214,18 +1237,29 @@
 </template>
 
 <script>
+import vue2Dropzone from 'vue2-dropzone'
+import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+
 import { mapState } from 'vuex'
 import Modal from '~/components/Modal/Modal.vue'
-
 
 export default {
   middleware: ['login'],
   components: {
-    Modal
+    Modal,
+    vueDropzone: vue2Dropzone
   },
   data() {
     return {
-      showModal: false,
+      dropzoneOptions: {
+        url: `/upload/?folder_id=41`,
+        thumbnailWidth: 150
+        // maxFilesize: 0.5,
+        // headers: { "My-Awesome-Header": "header value" }
+      },
+      showSidebar: false,
+      showModal_folderCreate: false,
+      showModal_fileUpload: false,
       nav: [
         {
           icon: 'inbox',
@@ -1287,16 +1321,24 @@ export default {
     ...mapState(['socket'])
   },
 
+  beforeMount() {
+    // console.log('######connect', this.$connect)
+    // console.log('######connect', this.$options)
+    // console.log('######', )
+    this.$options.sockets.onopen = () =>
+      this.$socket.sendObj({ cmd: 'folders' })
+
+    // this.$connect(`wss://closedfolders.com:8001/?hash=${localStorage.token}`)
+    // this.$options.sockets.onmessage = (data) => console.dir(data)
+    this.$options.sockets.onmessage = (data) => console.info('INFO', data.data)
+  },
+
   methods: {
-    create_folder() {
+    folder_create() {
       if (this.socket.isConnected) {
         this.$socket.sendObj({
-          cmd: 'create_folder',
+          cmd: 'folder_create',
           foldername: this.foldername
-        })
-
-        this.$socket.sendObj({
-          cmd: 'folders'
         })
       }
     }
@@ -1307,15 +1349,28 @@ export default {
 
 <style lang="stylus" scoped>
 
-// https://medium.com/mtholla/build-a-framework-free-dashboard-using-css-grid-and-flexbox-53d81c4aee68
-// https://codepen.io/trooperandz/pen/EOgJvg
-
 $height-header = 50px;
 $height-footer = 50px;
 
-$width-sidenav = 240px;
-$bg-sidenav = #354052
+$width-sidebar = 240px;
+$bg-sidebar = #354052
 $MW = 46em
+
+/*
+.slideSidebar-enter-active, .slideSidebar-leave-active
+  transition transform .4s
+.slideSidebar-enter, .slideSidebar-leave-active
+  transform translateX(-100%)
+*/
+
+
+#hamburger
+  display none
+  cursor pointer
+  transition: stroke .1s ease-in-out,color .1s ease-in-out;
+  &:hover
+    stroke #47bac1;
+
 
 scrollableArea()
   // height 100%
@@ -1329,7 +1384,7 @@ scrollableArea()
   &
     -ms-overflow-style none
 
-.sidenav
+.sidebar
 .main
   scrollableArea()
 
@@ -1337,36 +1392,47 @@ scrollableArea()
 .grid
   display: grid;
   height: 100vh;
-  overflow-x: hidden; // for hidden sidenav
+  overflow-x: hidden; // for hidden sidebar
   background #F5F9FC
 
-  // grid-template-columns: 100%; // Charts responsiveness won't work with fr units
-  grid-template-columns: $width-sidenav 1fr //calc(100% - $width-sidenav);
-
+  grid-template-columns: $width-sidebar 1fr
   grid-template-rows: $height-header 1fr $height-footer;
-
-  // grid-template-areas:
-  //   'header'
-  //   'main'
-  //   'footer';
-
-
   grid-template-areas:
-    'sidenav header'\
-    'sidenav main'\
-    'sidenav footer';
+    'sidebar header'\
+    'sidebar main'\
+    'sidebar footer';
 
+  @media (max-width: $MW)
+    #hamburger
+      display block
+    grid-template-columns: 1fr //calc(100% - $width-sidebar);
+    grid-template-areas:
+      'header'\
+      'main'\
+      'footer';
 
-// @media (min-width: $MW)
-//   .grid
-//     grid-template-columns: 240px calc(100% - 240px);
-//     grid-template-areas:
-//       'sidenav header'
-//       'sidenav main'
-//       'sidenav footer';
+    .sidebar
+      height 100%
+      width: $width-sidebar;
+      transform: translateX(-240px);
+      position fixed
+      transition: transform .35s //ease-in-out;
+      z-index 10
+      overflow: visible;
+      ov
+      &.show
+        transform: translateX(0);
+        .clickedArea
+          transition: background-color .3s .2s
+          cursor pointer
+          position: fixed;
+          left: 240px;
+          right: 0;
+          width: calc(100vw - 240px);
+          background: #3c485885;
+          height: 100%;
+          filter: blur(80px);
 
-//   .sidenav
-//     transform: translateX(0);
 
 
 
@@ -1374,37 +1440,29 @@ scrollableArea()
   grid-area: header;
   background #FFF
   box-shadow: 0 0 2rem 0 rgba(53,64,82,.1);
-  // border-bottom: 1px solid #dee2e6;
-
 
 .main
   grid-area: main;
-
 
 .footer
   grid-area: footer;
   background: #FFF;
   border-top: 1px solid #dee2e6;
 
-.sidenav
-  grid-area: sidenav;
-  // width: $width-sidenav;
-  background-color: $bg-sidenav;
-  // transform: translateX(-245px);
-  // transition: all .6s ease-in-out;
-  // box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
-  // z-index: 2;
 
-
+.sidebar
+  grid-area: sidebar;
+  background-color: $bg-sidebar;
+  color #ced4da
   a
     color #ced4da
-    padding 1em .7em
+    // padding 1em .7em
     text-decoration none
 
 
 .nav
   a
-    color #ced4da
+
     padding 1em
   // .icon
   //   width: 36px;
@@ -1415,6 +1473,7 @@ scrollableArea()
 
 .subList
   a
+    padding 1em .7em
     color #adb5bd
 
 // .nuxt-link-active
@@ -1432,14 +1491,6 @@ scrollableArea()
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-
-
-#hamburger
-  cursor pointer
-  transition: stroke .1s ease-in-out,color .1s ease-in-out;
-  &:hover
-    stroke #47bac1;
-
 
 
 

@@ -147,7 +147,7 @@ $info = #21b9bb
   cursor default
   // border-radius 5px
   background #FFF
-  padding .2em 0 1em 1em
+  padding .2em 1em 1em
   position relative
   margin 1rem 0
   // ropple back
@@ -162,7 +162,7 @@ $info = #21b9bb
 
 .body
   user-select text
-  word-break break-all
+  // word-break break-all
   line-height 1.2
   color #333
   font-size 90%
