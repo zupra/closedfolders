@@ -4,8 +4,19 @@
     style="height:16em; overflow-y: auto;resize: vertical;"
   ) {{socket.message}}
 
+  h1 LAST
 
-  //- .btn(@click="go") go
+  .breadcrumbs.flex
+    
+    .breadcrumb_It(
+      v-for="It in breadcrumbs"
+    )
+      N-link.mr_1(        
+        :to="{path:`/${It.foldername}`, query:{id:It.folder_id}}"
+        @click="go(It.folder_id)"
+      ) {{It.foldername}}
+      | » &nbsp;
+
 
 
 
@@ -20,10 +31,9 @@
           :src="`../color-svg/${It.icon}.svg`"
         )
         .ml_2
+          //- :to="{path:`/1/2/3/4/5/6/${It.foldername}`, query:{id:It.folder_id}}"
           N-link.text_x2(
-            v-if="It.folders"
-            :to="{path:`/${It.foldername}`, query:{id:It.folder_id}}"
-
+            :to="{path:`/${path}/${It.foldername}`, query:{id:It.folder_id}}"
           ) {{It.foldername}}
           .text_s1 {{It.created}}
 
@@ -59,6 +69,7 @@
         ) share
 
 
+
 </template>
 
 <script>
@@ -71,7 +82,16 @@ export default {
     return {}
   },
   computed: {
-    ...mapState(['socket'])
+    ...mapState(['socket']),
+    breadcrumbs() {
+      return this.socket.message.path
+    },
+    path() {
+      return this.breadcrumbs
+        .map((it) => it.foldername)
+        .slice(1)
+        .join('/')
+    }
   },
   created() {
     this.socket.isConnected &&
@@ -81,15 +101,15 @@ export default {
       })
   },
   methods: {
-    go() {
+    go(id) {
+      console.log('go folder_id: ', id)
       this.$socket.sendObj({
         cmd: 'folders',
-        folder_id: this.$route.query.id
+        folder_id: id
       })
     }
   }
 }
 </script>
 
-<style>
-</style>
+<style lang="stylus" scoped></style>

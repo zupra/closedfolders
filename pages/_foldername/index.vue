@@ -5,8 +5,18 @@
   ) {{socket.message}}
 
 
-  //- .btn(@click="go") go
+  
+  hr.hr_0
 
+  .breadcrumbs.flex
+    .breadcrumb_It(
+      v-for="It in breadcrumbs"
+    )
+      N-link.mr_1(        
+        :to="{path:`/${It.foldername}`, query:{id:It.folder_id}}"
+        @click="go(It.folder_id)"
+      ) {{It.foldername}}
+      | » &nbsp;
 
 
   .file_list(
@@ -20,9 +30,9 @@
           :src="`../color-svg/${It.icon}.svg`"
         )
         .ml_2
+          //- :to="{path:`/1/2/3/4/5/6/${It.foldername}`, query:{id:It.folder_id}}"
           N-link.text_x2(
-            :to="{path:`/${It.foldername}`, query:{id:It.folder_id}}"
-
+            :to="{path:`/${path}/${It.foldername}`, query:{id:It.folder_id}}"
           ) {{It.foldername}}
           .text_s1 {{It.created}}
 
@@ -70,7 +80,16 @@ export default {
     return {}
   },
   computed: {
-    ...mapState(['socket'])
+    ...mapState(['socket']),
+    breadcrumbs() {
+      return this.socket.message.path
+    },
+    path() {
+      return this.breadcrumbs
+        .map((it) => it.foldername)
+        .slice(1)
+        .join('/')
+    }
   },
   created() {
     this.socket.isConnected &&
@@ -80,15 +99,14 @@ export default {
       })
   },
   methods: {
-    go() {
+    go(id) {
       this.$socket.sendObj({
         cmd: 'folders',
-        folder_id: this.$route.query.id
+        folder_id: id
       })
     }
   }
 }
 </script>
 
-<style>
-</style>
+<style></style>
