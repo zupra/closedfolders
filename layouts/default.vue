@@ -1244,7 +1244,18 @@ import { mapState } from 'vuex'
 import Modal from '~/components/Modal/Modal.vue'
 
 export default {
-  middleware: ['login'],
+  middleware: ['login', 'clear-socket-msg'],
+
+  // middleware({ store }) {
+  //   store.app.router.beforeEach((to, from, next) => {
+  //     if (confirm('Are you sure?')) {
+  //       next()
+  //     } else {
+  //       next(false)
+  //     }
+  //   })
+  // },
+
   components: {
     Modal,
     vueDropzone: vue2Dropzone
@@ -1322,12 +1333,15 @@ export default {
   },
 
   beforeMount() {
-    // console.log('######connect', this.$connect)
-    // console.log('######connect', this.$options)
-    // console.log('######', )
+    console.log('######options', this.$options.sockets)
+
     this.$options.sockets.onopen = () =>
       this.$socket.sendObj({ cmd: 'folders' })
 
+    this.$options.sockets.onclose = () => {
+      // this.$disconnect()
+      this.$router.replace('/login')
+    }
     // this.$connect(`wss://closedfolders.com:8001/?hash=${localStorage.token}`)
     // this.$options.sockets.onmessage = (data) => console.dir(data)
     this.$options.sockets.onmessage = (data) => console.info('INFO', data.data)
@@ -1439,7 +1453,8 @@ scrollableArea()
 .header
   grid-area: header;
   background #FFF
-  box-shadow: 0 0 2rem 0 rgba(53,64,82,.1);
+  // box-shadow: 0 0 2rem 0 rgba(53,64,82,.1);
+  box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);
 
 .main
   grid-area: main;

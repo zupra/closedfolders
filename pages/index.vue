@@ -1,14 +1,13 @@
 <template lang="pug">
 .Page
 
-  hr
+
   pre(
     style="height:12em; overflow-y: auto;resize: vertical;"
   ) {{socket.message}}
   //- pre {{folders}}
   hr
-
-  .btn(@click="get_folder") get_folder
+  //- .btn(@click="get_folder") get_folder
 
 
 
@@ -87,6 +86,7 @@
 
 <script>
 import { mapState } from 'vuex'
+
 import Dropdown from '~/components/Dropdown/Dropdown.vue'
 
 export default {
@@ -96,8 +96,9 @@ export default {
   data() {
     return {}
   },
-
-  // https://closedfolders.com/api/2/folders/
+  computed: {
+    ...mapState(['socket'])
+  },
 
   beforeMount() {
     this.socket.isConnected &&
@@ -106,16 +107,12 @@ export default {
       })
   },
 
-  computed: {
-    ...mapState(['socket'])
-  },
   methods: {
-    get_folder() {
-      this.$socket.sendObj({
-        cmd: 'folders'
-      })
-      // this.$options.sockets.onmessage = (data) => console.log('XXX', data)
-    },
+    // get_folder() {
+    //   this.$socket.sendObj({
+    //     cmd: 'folders'
+    //   })
+    // },
     delete_folder(id) {
       this.$socket.sendObj({
         cmd: 'folders_delete',

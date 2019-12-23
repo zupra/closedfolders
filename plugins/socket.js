@@ -11,10 +11,9 @@ export default ({ store }) => {
       // connectManually: true,
       format: 'json',
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 3,
       reconnectionDelay: 3000,
       store: store
     }
   )
-
 }
