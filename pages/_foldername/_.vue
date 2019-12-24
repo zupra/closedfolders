@@ -1,7 +1,7 @@
 <template lang="pug">
 .Page
   pre(
-    style="height:16em; overflow-y: auto;resize: vertical;"
+    style="height:10em; overflow-y: auto;resize: vertical;"
   ) {{socket.message}}
 
   h1 LAST
@@ -9,12 +9,13 @@
   .breadcrumbs.flex
     
     .breadcrumb_It(
-      v-for="It in breadcrumbs"
+      v-for="(It, idx) in breadcrumbs"
     )
+      //- ${path.split('/').splice(0,idx).join('/')}
       N-link.mr_1(        
-        :to="{path:`/${It.foldername}`, query:{id:It.folder_id}}"
+        :to="{ path: !It.folder_id ? '/':`/.../${It.foldername}`, ...It.folder_id && {query:{id:It.folder_id}}   }"
         @click="go(It.folder_id)"
-      ) {{It.foldername}}
+      ) {{!It.folder_id ? 'home' : It.foldername}}
       | » &nbsp;
 
 

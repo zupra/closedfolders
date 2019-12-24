@@ -1,9 +1,11 @@
 <template lang="pug">
 .Page
 
-
+  //- pre(
+  //-   style="height:10em; overflow-y: auto;resize: vertical;"
+  //- ) {{folders}}
   pre(
-    style="height:12em; overflow-y: auto;resize: vertical;"
+    style="height:10em; overflow-y: auto;resize: vertical;"
   ) {{socket.message}}
   //- pre {{folders}}
   hr
@@ -11,8 +13,30 @@
 
 
 
+  .flex.y_center
+    .flex.y_center
+      b sort by &emsp;
+      .button-group
+        .btn.fill.lite(
+          v-for="order in ['name','size','created','type']"
+          @click="order_folder(order)"
+        ) {{order}}
+    | &emsp;
+    .flex.y_center
+      b order by &emsp;
+      .button-group
+        .btn.fill.lite(
+          v-for="sort in ['desc','asc']"
+           @click="sort_folder(sort)"
+        ) {{sort}}
 
 
+
+  //- socket.message.folders
+  //- folders.folders
+  //- template(
+  //-   v-if="folders"
+  //- )
   .file_list(
     v-for="It in socket.message.folders"
   )
@@ -32,7 +56,7 @@
 
       Dropdown(openTo="toLeft")
         .btn.outline(slot="btn") btns
-        .p_3
+        .p_3.flex_col
 
           //- .btn.mb_1(
           //-     v-for="btn in It.btns"
@@ -94,7 +118,9 @@ export default {
     Dropdown
   },
   data() {
-    return {}
+    return {
+      folders: null
+    }
   },
   computed: {
     ...mapState(['socket'])
@@ -105,14 +131,31 @@ export default {
       this.$socket.sendObj({
         cmd: 'folders'
       })
+
+    // this.$options.sockets.onmessage = (data) =>
+    //   (this.folders = JSON.parse(data.data))
   },
 
   methods: {
-    // get_folder() {
-    //   this.$socket.sendObj({
-    //     cmd: 'folders'
-    //   })
-    // },
+    order_folder(order) {
+      this.$socket.sendObj({
+        cmd: 'folders',
+        order: order
+      })
+      // this.$options.sockets.onmessage = (data) =>
+      //   (this.folders = JSON.parse(data.data))
+    },
+
+    sort_folder(sort) {
+      this.$socket.sendObj({
+        cmd: 'folders',
+        sort: sort,
+        order: 'type'
+      })
+      // this.$options.sockets.onmessage = (data) =>
+      //   (this.folders = JSON.parse(data.data))
+    },
+
     delete_folder(id) {
       this.$socket.sendObj({
         cmd: 'folders_delete',
@@ -122,8 +165,6 @@ export default {
   }
 }
 </script>
-
-
 
 <style lang="stylus" scoped>
 // .file_list

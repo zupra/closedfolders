@@ -33,10 +33,8 @@
 
 
 
+
   header.header.flex.x_sb.y_center.px_3
-
-
-
     svg#hamburger(
         @click="showSidebar = !showSidebar",
         width='44',
@@ -87,9 +85,13 @@
       @click="showSidebar = !showSidebar",
     )
 
-    center
-      div socket connected:
-        b {{socket.isConnected}}
+    
+    small socket connected:
+      b {{isConnected}}
+    br
+    .btn.sm(
+      @click="$store.commit('SOCKET_ONCLOSE')"
+    ) close
 
 
     .flex.my_4
@@ -110,10 +112,11 @@
 
 
     .expand
-
-      .ml_4.flex.y_start
+      .expand_trigger.ripple.flex.y_start(
+        @click="subNavIsOpen=!subNavIsOpen"
+        :class="{open:subNavIsOpen}",
+      )
         svg.icon.mr_3(height="36px", width="36px")
-          //- use(xlink:href="#user")
           use( 
             v-bind="{'xlink:href': require('../assets/sprite/svg/feaver.svg')+'#user'}",
             stroke="#47bac1"
@@ -122,8 +125,23 @@
           .text_x2 name
           .text_x1 name
 
+        svg.expand_trigger-Icon(
+          :class="{open:subNavIsOpen}",
+          width='20',
+          height='6',
+          viewBox='0 0 40 12',
+          stroke='#FFF',
+          stroke-width='3', 
+          fill='none'
+        )
+          polyline(points='12,2 20,10 28,2')
 
-      .subList(v-for="item in navInner")
+
+
+      .expand_body(
+        :class="{open:subNavIsOpen}",
+        v-for="item in navInner"
+      )
         N-link.flex.y_start(
           v-if="item.name !== 'LogOut'"
           :to="item.link"
@@ -134,8 +152,7 @@
             )
           div {{item.name}}
 
-        a.flex.y_start(
-          href="#"
+        .flex.y_start(
           v-else
           @click.prevent="$store.commit('SOCKET_ONCLOSE');$router.push('/login')"
         )
@@ -143,7 +160,7 @@
             //- v-bind="{'xlink:href':`#${item.icon}`}"
             use(
               v-bind="{'xlink:href': require('../assets/sprite/svg/feaver.svg')+`#${item.icon}`}",
-              stroke="#CCC"
+              stroke="#a180da"
             )
           div {{item.name}}
 
@@ -188,15 +205,19 @@ import Modal from '~/components/Modal/Modal.vue'
 export default {
   middleware: ['login', 'clear-socket-msg'],
 
-  // middleware({ store }) {
-  //   store.app.router.beforeEach((to, from, next) => {
-  //     if (confirm('Are you sure?')) {
-  //       next()
-  //     } else {
-  //       next(false)
-  //     }
-  //   })
-  // },
+  /**   
+    middleware({ store, redirect }) {
+      if (!store.socket.isConnected) return redirect('/login')
+      // store.app.router.beforeEach((to, from, next) => {
+      //   // if (confirm('Are you sure?'))
+      //   if (store.socket.isConnected) {
+      //     next()
+      //   } else {
+      //     next(false)
+      //   }
+      // })
+    },
+  */
 
   components: {
     Modal,
@@ -213,6 +234,7 @@ export default {
       showSidebar: false,
       showModal_folderCreate: false,
       showModal_fileUpload: false,
+      subNavIsOpen: false,
       nav: [
         {
           icon: 'inbox',
@@ -271,33 +293,39 @@ export default {
     }
   },
   computed: {
-    ...mapState(['socket'])
+    ...mapState(['socket']),
+    isConnected() {
+      return this.socket.isConnected
+    }
+  },
+
+  watch: {
+    isConnected(newVal) {
+      if (!newVal) this.$router.replace('/login')
+    }
   },
 
   beforeMount() {
-    console.log('######options', this.$options.sockets)
+    // console.log('######options', this.$options.sockets)
+    // this.$disconnect()
 
     this.$options.sockets.onopen = () =>
       this.$socket.sendObj({ cmd: 'folders' })
 
-    this.$options.sockets.onclose = () => {
-      // this.$disconnect()
-      this.$notice('disconnect', result.message.text)
+    this.$options.sockets.onclose = (data) => {
+      this.$notice('disconnect', 'disconnect')
       this.$router.replace('/login')
     }
     // this.$connect(`wss://closedfolders.com:8001/?hash=${localStorage.token}`)
-    // this.$options.sockets.onmessage = (data) => console.dir(data)
     this.$options.sockets.onmessage = (data) => console.info('INFO', data.data)
   },
 
   methods: {
     folder_create() {
-      if (this.socket.isConnected) {
-        this.$socket.sendObj({
-          cmd: 'folder_create',
-          foldername: this.foldername
-        })
-      }
+      this.$socket.sendObj({
+        cmd: 'folder_create',
+        foldername: this.foldername
+      })
     }
   }
 }
@@ -413,43 +441,66 @@ scrollableArea()
   color #ced4da
   a
     color #ced4da
-    // padding 1em .7em
     text-decoration none
 
+.expand
+  // .nuxt-link-active
+  &_trigger
+    position relative
+    padding .7em 0
+    padding-left 1.2rem
+    cursor pointer
+    user-select none
+    &:hover,
+    &.open
+      background-color: rgba(#000, .3);
+    &-Icon
+      position absolute
+      top 1em
+      right 1em
+      transition transform .2s cubic-bezier(.23, 1, .32, 1)
+      &.open
+        stroke: #a180da
+        transform rotate(180deg)
+
+  &_body
+    background-color: rgba(#000, .15);
+    max-height: 0;
+    overflow: hidden;
+    // transition: all .3s ease;
+    transition: max-height 0.3s ease-out;
+    // opacity: 0;
+    &.open
+      max-height: 100%;
+      // opacity: 1;
+      // visibility: auto;
+    & > *
+      padding .7em 0
+      padding-left 1.2rem
+      &:hover
+        background-color: rgba(#000, .1);
+
+  .nuxt-link-exact-active
+    background rgba(#CCC, 0.1)
 
 .nav
   a
-
     padding 1em
-  // .icon
-  //   width: 36px;
-  //   height: 36px;
+    &:hover
+      background-color: rgba(#000, .1);
+      .icon
+        stroke #FFF
+
   small
     color #6c757d
 
 
-.subList
-  a
-    padding 1em //.7em
-    padding-left 1.8em
-    color #adb5bd
-
-.expand
-  // .nuxt-link-active
-  .nuxt-link-exact-active
-    background rgba(#CCC, 0.2)
-
 
 
 .icon
-  // width: 24px;
-  // height: 24px;
-  /*  fill: currentColor;*/
   fill: none;
   stroke: rgba(#FFF, .3) //currentColor;
   stroke-width: 2;
-  // stroke-linecap: round;
-  // stroke-linejoin: round;
 
 
 

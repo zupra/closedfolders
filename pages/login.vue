@@ -64,7 +64,6 @@
 
 </template>
 
-
 <script>
 export default {
   layout: 'blank',
@@ -109,8 +108,6 @@ export default {
 }
 </script>
 
-
-
 <style lang="stylus">
 //- @import "~@/components/Tabs/_tabs.styl"
 
@@ -149,7 +146,7 @@ export default {
     cursor pointer
     padding .7rem 1rem
     font-weight bold
-    color #477dca //#038377 //
+    color #a180da
     &.curr
       background #FFF
 
@@ -169,10 +166,4 @@ export default {
   padding 1em 2em 1.6em
   background #FFF
   //- background:url(https://raw.githubusercontent.com/khadkamhn/day-01-login-form/master/img/bg.jpg)
-
 </style>
-
-
-
-
-
