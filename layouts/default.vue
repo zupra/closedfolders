@@ -25,7 +25,12 @@
     title="add new File"
   )
     p add new File
-      <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone>
+      vue-dropzone( 
+        ref="myVueDropzone" 
+        id="dropzone" 
+        :options="dropzoneOptions"
+        @vdropzone-complete="fileUpload_complete"
+      )
     .flex.x_end.y_center(slot="actions")
       .btn.lg(
         @click="showModal_fileUpload = false"
@@ -226,8 +231,12 @@ export default {
   data() {
     return {
       dropzoneOptions: {
-        url: `/upload/?folder_id=41`,
-        thumbnailWidth: 150
+        url: ` https://closedfolders.com/upload/?folder_id=59&hash=${localStorage.token}`,
+        addRemoveLinks: true,
+        thumbnailWidth: 150,
+        thumbnailHeight: 150,
+        chunking: true
+        // chunkSize: 500,
         // maxFilesize: 0.5,
         // headers: { "My-Awesome-Header": "header value" }
       },
@@ -321,10 +330,14 @@ export default {
   },
 
   methods: {
+    fileUpload_complete(file) {
+      console.log(file)
+    },
     folder_create() {
       this.$socket.sendObj({
         cmd: 'folder_create',
-        foldername: this.foldername
+        foldername: this.foldername,
+        folder_id: null
       })
     }
   }

@@ -12,7 +12,7 @@
   //- .btn(@click="get_folder") get_folder
 
 
-
+  //- >>>>>
   .flex.y_center
     .flex.y_center
       b sort by &emsp;
@@ -29,20 +29,23 @@
           v-for="sort in ['desc','asc']"
            @click="sort_folder(sort)"
         ) {{sort}}
+  .flex.mt_2
+    input(
+      v-model="foldername"
+      placeholder="foldername"
+    )
+  
+    .btn.ml_1(
+      @click="folder_rename()"
+    ) rename folder
+  //- <<<<
 
-
-
-  //- socket.message.folders
-  //- folders.folders
-  //- template(
-  //-   v-if="folders"
-  //- )
+  //- FOLDERS
   .file_list(
     v-for="It in socket.message.folders"
   )
     .It.flex.x_sb.mb_3.p_2
       .flex.y_start
-        //- :src="require(`../static/color-svg/${It.icon}.svg`)"
         img(
           width="39px"
           :src="`../color-svg/${It.icon}.svg`"
@@ -86,10 +89,8 @@
 
 
   hr
-
   //-
     h1 Files
-
     .file_list(
       v-for="file in files"
     )
@@ -102,8 +103,6 @@
           .text_s1 {{file.size}} - {{file.created}}
           .flex
             .badge(v-for="tag in file.tags") {{tag.tagname}}
-
-
 
 
 </template>
@@ -166,7 +165,7 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 // .file_list
 
 .It
@@ -192,4 +191,9 @@ export default {
     margin-left: .15rem;
   &:hover
     background #42ac63
+
+
+.breadcrumbs
+  padding .5em 1em
+  background #dee2e6
 </style>

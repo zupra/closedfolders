@@ -4,42 +4,16 @@
     style="height:10em; overflow-y: auto;resize: vertical;"
   ) {{socket.message}}
 
+  h1 LAST
 
-  //- >>>>>
-  .flex.y_center
-    .flex.y_center
-      b sort by &emsp;
-      .button-group
-        .btn.fill.lite(
-          v-for="order in ['name','size','created','type']"
-          @click="order_folder(order)"
-        ) {{order}}
-    | &emsp;
-    .flex.y_center
-      b order by &emsp;
-      .button-group
-        .btn.fill.lite(
-          v-for="sort in ['desc','asc']"
-           @click="sort_folder(sort)"
-        ) {{sort}}
-  .flex.mt_2
-    input(
-      v-model="foldername"
-      placeholder="foldername"
-    )
-  
-    .btn.ml_1(
-      @click="folder_rename()"
-    ) rename folder
-  //- <<<<
-
-
-  hr
-
-  .breadcrumbs.flex.mb_3
+  .breadcrumbs.flex
+    
     .breadcrumb_It(
-      v-for="It in breadcrumbs"
+      v-for="(It, idx) in breadcrumbs"
     )
+      //- ${path.split('/').splice(0,idx).join('/')}
+      //- :to="{ path: !It.folder_id ? '/':`/${path.split('/').splice(0,idx-1).join('/')}/${It.foldername}`, ...It.folder_id && {query:{id:It.folder_id}}   }"
+      //- :to="{ path: !It.folder_id ? '/':`/.../${It.foldername}`, ...It.folder_id && {query:{id:It.folder_id}}   }"
       N-link.mr_1(        
         :to="{ path: !It.folder_id ? '/':`/${path.split('/').splice(0,idx).join('/')}`, ...It.folder_id && {query:{id:It.folder_id}}   }"
         @click="go(It.folder_id)"
@@ -48,18 +22,22 @@
 
 
 
-  //- FOLDERS
+
   .file_list(
     v-for="It in socket.message.folders"
   )
     .It.flex.x_sb.mb_3.p_2
       .flex.y_start
+        //- :src="require(`../static/color-svg/${It.icon}.svg`)"
+        
         img(
           width="39px"
           :src="`/color-svg/${It.icon}.svg`"
         )
         .ml_2
           //- :to="{path:`/1/2/3/4/5/6/${It.foldername}`, query:{id:It.folder_id}}"
+
+          
           N-link.text_x2(
             :to="{path:`/${path}/${It.foldername}`, query:{id:It.folder_id}}"
           ) {{It.foldername}}
@@ -69,30 +47,36 @@
       //-   .btn.outline(slot="btn") btns
       //-   .p_3
 
+          //- .btn.mb_1(
+          //-     v-for="btn in It.btns"
+          //-   ) {{btn}}
+
+      //- hr
       .flex
         .btn.ml_1(
           v-if="It.btns.includes('delete')"
-          @click="folder_delete(It.folder_id)"
+          @click="delete_folder(It.folder_id)"
         ) delete
         .btn.ml_1(
           v-if="It.btns.includes('rename')"
-          @click="folder_rename(It.folder_id)"
+          @click="rename_folder(It.folder_id)"
         ) rename
         .btn.ml_1(
           v-if="It.btns.includes('move')"
-          @click="folder_move(It.folder_id)"
+          @click="move_folder(It.folder_id)"
         ) move
         .btn.ml_1(
           v-if="It.btns.includes('copy')"
-          @click="folder_copy()"
+          @click="copy_folder()"
         ) copy
         .btn.ml_1(
           v-if="It.btns.includes('share')"
-          @click="folder_share(It.folder_id)"
+          @click="share_folder(It.folder_id)"
         ) share
 
 
-  //- FILES
+
+
   .file_list(
     v-for="file in socket.message.files"
   )
@@ -109,8 +93,6 @@
 
 
 
-
-
 </template>
 
 <script>
@@ -119,10 +101,17 @@ import { mapState } from 'vuex'
 import Dropdown from '~/components/Dropdown/Dropdown.vue'
 
 export default {
+  // validate(router) {
+  //   console.log(router)
+  //   return true
+  // },
+
+  // validate({ params }) {
+  //   return params.foldername == '...'
+  // },
+
   data() {
-    return {
-      foldername: ''
-    }
+    return {}
   },
   computed: {
     ...mapState(['socket']),
@@ -146,34 +135,16 @@ export default {
   },
   methods: {
     go(id) {
+      console.log('go folder_id: ', id)
       this.$socket.sendObj({
         cmd: 'folders',
+        path: this.$route.path.split('/'),
         folder_id: id
-      })
-    },
-
-    order_folder(order) {
-      this.$socket.sendObj({
-        cmd: 'folders',
-        order: order
-      })
-    },
-
-    sort_folder(sort) {
-      this.$socket.sendObj({
-        cmd: 'folders',
-        sort: sort,
-        order: 'type'
-      })
-    },
-
-    folder_rename() {
-      this.$socket.sendObj({
-        cmd: 'folder_rename',
-        foldername: this.foldername,
-        folder_id: this.$route.query.id
+        // folder_id: id
       })
     }
   }
 }
 </script>
+
+<style lang="stylus" scoped></style>

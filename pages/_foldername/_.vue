@@ -6,14 +6,13 @@
 
   h1 LAST
 
-  .breadcrumbs.flex
+  .breadcrumbs.flex.mb_3
     
     .breadcrumb_It(
       v-for="(It, idx) in breadcrumbs"
     )
-      //- ${path.split('/').splice(0,idx).join('/')}
       N-link.mr_1(        
-        :to="{ path: !It.folder_id ? '/':`/.../${It.foldername}`, ...It.folder_id && {query:{id:It.folder_id}}   }"
+        :to="{ path: !It.folder_id ? '/':`/${path.split('/').splice(0,idx).join('/')}`, ...It.folder_id && {query:{id:It.folder_id}}   }"
         @click="go(It.folder_id)"
       ) {{!It.folder_id ? 'home' : It.foldername}}
       | » &nbsp;
@@ -26,10 +25,9 @@
   )
     .It.flex.x_sb.mb_3.p_2
       .flex.y_start
-        //- :src="require(`../static/color-svg/${It.icon}.svg`)"
         img(
           width="39px"
-          :src="`../color-svg/${It.icon}.svg`"
+          :src="`/color-svg/${It.icon}.svg`"
         )
         .ml_2
           //- :to="{path:`/1/2/3/4/5/6/${It.foldername}`, query:{id:It.folder_id}}"
@@ -41,7 +39,6 @@
       //- Dropdown(openTo="toLeft")
       //-   .btn.outline(slot="btn") btns
       //-   .p_3
-
           //- .btn.mb_1(
           //-     v-for="btn in It.btns"
           //-   ) {{btn}}
@@ -71,6 +68,23 @@
 
 
 
+
+  .file_list(
+    v-for="file in socket.message.files"
+  )
+    .It.flex.y_start.mb_3
+      img(
+        width="39px"
+        :src="`/color-svg/${file.icon}.svg`"
+      )
+      .ml_2
+        .text_x2 {{file.filename}}
+        .text_s1 {{file.size}} - {{file.created}}
+        .flex
+          .badge(v-for="tag in file.tags") {{tag.name}}
+
+
+
 </template>
 
 <script>
@@ -79,6 +93,11 @@ import { mapState } from 'vuex'
 import Dropdown from '~/components/Dropdown/Dropdown.vue'
 
 export default {
+  // validate(router) {
+  //   console.log(router)
+  //   return true
+  // },
+
   data() {
     return {}
   },
@@ -99,6 +118,7 @@ export default {
       this.$socket.sendObj({
         cmd: 'folders',
         folder_id: this.$route.query.id
+        // path: this.$route.path.split('/')
       })
   },
   methods: {
@@ -106,7 +126,8 @@ export default {
       console.log('go folder_id: ', id)
       this.$socket.sendObj({
         cmd: 'folders',
-        folder_id: id
+        path: this.$route.path.split('/')
+        // folder_id: id
       })
     }
   }
