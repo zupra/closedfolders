@@ -22,6 +22,7 @@
 
       label.field Your email
         input.xl(
+          autofocus
           v-model="loginData.login",
           placeholder="email",
           name="email"

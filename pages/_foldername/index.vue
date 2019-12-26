@@ -6,7 +6,7 @@
 
 
   //- >>>>>
-  .flex.y_center
+  .flex
     .flex.y_center
       b sort by &emsp;
       .button-group
@@ -22,15 +22,31 @@
           v-for="sort in ['desc','asc']"
            @click="sort_folder(sort)"
         ) {{sort}}
-  .flex.mt_2
+  .flex.y_center.mt_2
+    b rename &emsp;
     input(
       v-model="foldername"
       placeholder="foldername"
     )
-  
+
     .btn.ml_1(
       @click="folder_rename()"
     ) rename folder
+
+  //- pre {{target_folder_id }}
+  .flex.y_center.mt_2
+    b move to &emsp;
+    //- @change="folders_move()"
+    select.lg(
+      v-model="target_folder_id"
+    )
+      option(
+        v-for="It in breadcrumbs"
+        :value="It.folder_id"
+      ) {{It.foldername}}
+
+
+
   //- <<<<
 
 
@@ -38,9 +54,9 @@
 
   .breadcrumbs.flex.mb_3
     .breadcrumb_It(
-      v-for="It in breadcrumbs"
+      v-for="(It,idx) in breadcrumbs"
     )
-      N-link.mr_1(        
+      N-link.mr_1(
         :to="{ path: !It.folder_id ? '/':`/${path.split('/').splice(0,idx).join('/')}`, ...It.folder_id && {query:{id:It.folder_id}}   }"
         @click="go(It.folder_id)"
       ) {{!It.folder_id ? 'home' : It.foldername}}
@@ -121,7 +137,8 @@ import Dropdown from '~/components/Dropdown/Dropdown.vue'
 export default {
   data() {
     return {
-      foldername: ''
+      foldername: '',
+      target_folder_id: null
     }
   },
   computed: {
@@ -164,6 +181,14 @@ export default {
         cmd: 'folders',
         sort: sort,
         order: 'type'
+      })
+    },
+
+    folders_move() {
+      this.$socket.sendObj({
+        cmd: 'folders_move',
+        target_folder_id: this.target_folder_id,
+        folder_id: this.$route.query.id
       })
     },
 

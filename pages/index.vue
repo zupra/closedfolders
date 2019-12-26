@@ -34,14 +34,27 @@
       v-model="foldername"
       placeholder="foldername"
     )
-  
+
     .btn.ml_1(
       @click="folder_rename()"
     ) rename folder
+
+
+  //- pre {{target_folder_id }}
+  .flex.y_center.mt_2
+    b move to &emsp;
+    //- @change="folders_move()"
+    select.lg(
+      v-model="target_folder_id"
+    )
+      option(
+        v-for="It in breadcrumbs"
+        :value="It.folder_id"
+      ) {{It.foldername}}
   //- <<<<
 
   //- FOLDERS
-  .file_list(
+  .file_list.mt_3(
     v-for="It in socket.message.folders"
   )
     .It.flex.x_sb.mb_3.p_2
@@ -118,7 +131,9 @@ export default {
   },
   data() {
     return {
-      folders: null
+      target_folder_id: null,
+      folders: null,
+      foldername: ''
     }
   },
   computed: {
@@ -153,6 +168,15 @@ export default {
       })
       // this.$options.sockets.onmessage = (data) =>
       //   (this.folders = JSON.parse(data.data))
+    },
+
+
+    folder_rename() {
+      this.$socket.sendObj({
+        cmd: 'folder_rename',
+        foldername: this.foldername,
+        folder_id: this.$route.query.id
+      })
     },
 
     delete_folder(id) {

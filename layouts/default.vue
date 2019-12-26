@@ -25,10 +25,11 @@
     title="add new File"
   )
     p add new File
-      vue-dropzone( 
-        ref="myVueDropzone" 
-        id="dropzone" 
+      vue-dropzone(
+        ref="myVueDropzone"
+        id="dropzone"
         :options="dropzoneOptions"
+        :duplicateCheck="true"
         @vdropzone-complete="fileUpload_complete"
       )
     .flex.x_end.y_center(slot="actions")
@@ -62,7 +63,7 @@
         @click="showModal_folderCreate = true"
       ) &nbsp;
         svg.icon(
-          
+
           width="24px",
           height="24px",
         )
@@ -90,7 +91,7 @@
       @click="showSidebar = !showSidebar",
     )
 
-    
+
     small socket connected:
       b {{isConnected}}
     br
@@ -107,7 +108,7 @@
         //- v-bind="{'xlink:href':`#${item.icon}`}"
         //- v-bind="{'xlink:href':`../static/svg_sprite/feaver.svg#inbox`}"
         svg.icon(height="24px", width="24px")
-          use( 
+          use(
             v-bind="{'xlink:href': require('../assets/sprite/svg/feaver.svg')+'#archive'}",
             stroke="#47bac1"
           )
@@ -122,7 +123,7 @@
         :class="{open:subNavIsOpen}",
       )
         svg.icon.mr_3(height="36px", width="36px")
-          use( 
+          use(
             v-bind="{'xlink:href': require('../assets/sprite/svg/feaver.svg')+'#user'}",
             stroke="#47bac1"
           )
@@ -136,7 +137,7 @@
           height='6',
           viewBox='0 0 40 12',
           stroke='#FFF',
-          stroke-width='3', 
+          stroke-width='3',
           fill='none'
         )
           polyline(points='12,2 20,10 28,2')
@@ -152,7 +153,7 @@
           :to="item.link"
         )
           svg.icon.mr_3(height="24px", width="24px")
-            use( 
+            use(
               v-bind="{'xlink:href': require('../assets/sprite/svg/feaver.svg')+`#${item.icon}`}"
             )
           div {{item.name}}
@@ -210,7 +211,7 @@ import Modal from '~/components/Modal/Modal.vue'
 export default {
   middleware: ['login', 'clear-socket-msg'],
 
-  /**   
+  /**
     middleware({ store, redirect }) {
       if (!store.socket.isConnected) return redirect('/login')
       // store.app.router.beforeEach((to, from, next) => {
@@ -231,7 +232,9 @@ export default {
   data() {
     return {
       dropzoneOptions: {
-        url: ` https://closedfolders.com/upload/?folder_id=59&hash=${localStorage.token}`,
+        // url: `https://closedfolders.com/upload/?folder_id=59&hash=${localStorage.token}`,
+        // url: 'https://httpbin.org/post',
+        url: 'https://closedfolders.com/upload/',
         addRemoveLinks: true,
         thumbnailWidth: 150,
         thumbnailHeight: 150,
@@ -332,6 +335,10 @@ export default {
   methods: {
     fileUpload_complete(file) {
       console.log(file)
+    },
+    sendingEvent (file, xhr, formData) {
+      formData.append('folder_id', 59);
+      formData.append('hash', localStorage.token);
     },
     folder_create() {
       this.$socket.sendObj({
