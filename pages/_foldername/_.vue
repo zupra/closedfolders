@@ -47,23 +47,23 @@
       .flex
         .btn.ml_1(
           v-if="It.btns.includes('delete')"
-          @click="delete_folder(It.folder_id)"
+          @click="folders_delete(It.folder_id)"
         ) delete
         .btn.ml_1(
           v-if="It.btns.includes('rename')"
-          @click="rename_folder(It.folder_id)"
+          @click="folders_rename(It.folder_id)"
         ) rename
         .btn.ml_1(
           v-if="It.btns.includes('move')"
-          @click="move_folder(It.folder_id)"
+          @click="folders_move(It.folder_id)"
         ) move
         .btn.ml_1(
           v-if="It.btns.includes('copy')"
-          @click="copy_folder()"
+          @click="folders_copy()"
         ) copy
         .btn.ml_1(
           v-if="It.btns.includes('share')"
-          @click="share_folder(It.folder_id)"
+          @click="folders_share(It.folder_id)"
         ) share
 
 
@@ -129,7 +129,17 @@ export default {
         path: this.$route.path.split('/')
         // folder_id: id
       })
-    }
+    },
+    folders_delete(id) {
+      this.$socket.sendObj({
+        cmd: 'folders_delete',
+        folder_id: id
+      })
+    },
+    folders_rename() {},
+    folders_move() {},
+    folders_copy() {},
+    folders_share() {}
   }
 }
 </script>

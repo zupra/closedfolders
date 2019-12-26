@@ -6,14 +6,13 @@ export default ({ store }) => {
     VueNativeSock,
     // `wss://closedfolders.com:8001/?hash=${store.state.persist.token}`,
     `wss://closedfolders.com:8001/?hash=${localStorage.token}`,
-
     {
-      // connectManually: true,
-      format: 'json',
-      reconnection: true,
-      reconnectionAttempts: 3,
-      reconnectionDelay: 3000,
-      store: store
+      connectManually: true
+      // format: 'json',
+      // reconnection: true,
+      // reconnectionAttempts: 3,
+      // reconnectionDelay: 3000,
+      // store: store
     }
   )
 }

@@ -84,7 +84,7 @@ export default {
     }
   },
   created() {
-    console.log('######socket', this.$socket)
+    console.log('###### socket(login)', this.$socket)
   },
   methods: {
     async login() {

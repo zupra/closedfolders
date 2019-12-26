@@ -38,7 +38,7 @@ export default {
     position: {
       type: String,
       default: 'Y_center',
-      validator: prop => ['Y_center', 'rModal', 'lModal'].includes(prop)
+      validator: (prop) => ['Y_center', 'rModal', 'lModal'].includes(prop)
     }
   },
   // watch: {
@@ -72,7 +72,7 @@ $bg = #f1f1f1
 
 .Modal
   &-rootOverlay
-    z-index 100
+    z-index 101
     position fixed
     left 0
     top 0

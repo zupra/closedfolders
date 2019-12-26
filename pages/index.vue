@@ -1,15 +1,30 @@
 <template lang="pug">
 .Page
 
-  //- pre(
-  //-   style="height:10em; overflow-y: auto;resize: vertical;"
-  //- ) {{folders}}
+
+  Modal(
+    :show.sync="showModal_foldersRename",
+    mod="SM toCenter",
+    title="Rename"
+  )
+    //- p Rename Folder {{foldername}}
+    .flex_col
+      input.xl(
+        v-model="foldername"
+        placeholder="foldername"
+      )
+    .flex.x_end.y_center(slot="actions")
+      .btn.lg(
+        @click="folders_rename(); showModal_folderCreate = false"
+      ) Rename
+
+
   pre(
     style="height:10em; overflow-y: auto;resize: vertical;"
   ) {{socket.message}}
   //- pre {{folders}}
   hr
-  //- .btn(@click="get_folder") get_folder
+
 
 
   //- >>>>>
@@ -29,33 +44,34 @@
           v-for="sort in ['desc','asc']"
            @click="sort_folder(sort)"
         ) {{sort}}
-  .flex.mt_2
-    input(
-      v-model="foldername"
-      placeholder="foldername"
-    )
+  //- .flex.mt_2
+  //-   input(
+  //-     v-model="foldername"
+  //-     :placeholder="$route.query.id"
+  //-   )
 
-    .btn.ml_1(
-      @click="folder_rename()"
-    ) rename folder
+  //-   .btn.ml_1(
+  //-     @click="folders_rename()"
+  //-   ) rename folder
 
 
   //- pre {{target_folder_id }}
-  .flex.y_center.mt_2
-    b move to &emsp;
-    //- @change="folders_move()"
-    select.lg(
-      v-model="target_folder_id"
-    )
-      option(
-        v-for="It in breadcrumbs"
-        :value="It.folder_id"
-      ) {{It.foldername}}
+  //- .flex.y_center.mt_2
+  //-   b move to &emsp;
+  //-   select.lg(
+  //-     @change="folders_move()"
+  //-     v-model="target_folder_id"
+  //-   )
+  //-     option(
+  //-       v-for="It in breadcrumbs"
+  //-       :value="It.folder_id"
+  //-     ) {{It.foldername}}
   //- <<<<
 
   //- FOLDERS
   .file_list.mt_3(
-    v-for="It in socket.message.folders"
+    v-for="(It,idx) in socket.message.folders"
+    :key="It.folder_id"
   )
     .It.flex.x_sb.mb_3.p_2
       .flex.y_start
@@ -79,13 +95,13 @@
           //-   ) {{btn}}
 
           //- hr
-          .btn.mb_1(
+          .btn.fill.red.mb_1(
             v-if="It.btns.includes('delete')"
-            @click="delete_folder(It.folder_id)"
+            @click="folders_delete(It.folder_id)"
           ) delete
           .btn.mb_1(
             v-if="It.btns.includes('rename')"
-            @click="rename_folder(It.folder_id)"
+            @click="startRename(It.foldername)"
           ) rename
           .btn.mb_1(
             v-if="It.btns.includes('move')"
@@ -124,16 +140,19 @@
 import { mapState } from 'vuex'
 
 import Dropdown from '~/components/Dropdown/Dropdown.vue'
+import Modal from '~/components/Modal/Modal.vue'
 
 export default {
   components: {
-    Dropdown
+    Dropdown,
+    Modal
   },
   data() {
     return {
       target_folder_id: null,
       folders: null,
-      foldername: ''
+      foldername: '',
+      showModal_foldersRename: false
     }
   },
   computed: {
@@ -170,16 +189,27 @@ export default {
       //   (this.folders = JSON.parse(data.data))
     },
 
-
-    folder_rename() {
+    folders_move() {
       this.$socket.sendObj({
-        cmd: 'folder_rename',
+        cmd: 'folders_move'
+        // folder_id: this.$route.query.id,
+        // target_folder_id: this.target_folder_id
+      })
+    },
+
+    startRename(oldName) {
+      this.showModal_foldersRename = true
+      this.foldername = oldName
+    },
+    folders_rename() {
+      this.$socket.sendObj({
+        cmd: 'folders_rename',
         foldername: this.foldername,
         folder_id: this.$route.query.id
       })
     },
 
-    delete_folder(id) {
+    folders_delete(id) {
       this.$socket.sendObj({
         cmd: 'folders_delete',
         folder_id: id

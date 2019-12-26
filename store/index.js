@@ -31,7 +31,6 @@ export const mutations = {
 
   // default handler called for all methods
   SOCKET_ONMESSAGE(state, message) {
-    // message.type && this.SOCKET_ONCLOSE
     state.socket.message = message
   },
   SOCKET_ONOPEN(state, event) {

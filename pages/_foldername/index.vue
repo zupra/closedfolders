@@ -22,15 +22,19 @@
           v-for="sort in ['desc','asc']"
            @click="sort_folder(sort)"
         ) {{sort}}
-  .flex.y_center.mt_2
-    b rename &emsp;
+
+
+
+
+  .flex.mt_2.y_center
+    b rename &nbsp;
+    | current folder &emsp;
     input(
       v-model="foldername"
-      placeholder="foldername"
+      :placeholder="`id:${$route.query.id}`"
     )
-
     .btn.ml_1(
-      @click="folder_rename()"
+      @click="folders_rename()"
     ) rename folder
 
   //- pre {{target_folder_id }}
@@ -44,6 +48,7 @@
         v-for="It in breadcrumbs"
         :value="It.folder_id"
       ) {{It.foldername}}
+
 
 
 
@@ -67,6 +72,7 @@
   //- FOLDERS
   .file_list(
     v-for="It in socket.message.folders"
+    :key="It.folder_id"
   )
     .It.flex.x_sb.mb_3.p_2
       .flex.y_start
@@ -90,17 +96,17 @@
           v-if="It.btns.includes('delete')"
           @click="folder_delete(It.folder_id)"
         ) delete
-        .btn.ml_1(
-          v-if="It.btns.includes('rename')"
-          @click="folder_rename(It.folder_id)"
-        ) rename
+        //- .btn.ml_1(
+        //-   v-if="It.btns.includes('rename')"
+        //-   @click="folders_rename(It.folder_id)"
+        //- ) rename
         .btn.ml_1(
           v-if="It.btns.includes('move')"
-          @click="folder_move(It.folder_id)"
+          @click="folders_move(It.folder_id)"
         ) move
         .btn.ml_1(
           v-if="It.btns.includes('copy')"
-          @click="folder_copy()"
+          @click="folders_copy()"
         ) copy
         .btn.ml_1(
           v-if="It.btns.includes('share')"
@@ -111,6 +117,7 @@
   //- FILES
   .file_list(
     v-for="file in socket.message.files"
+    :key="file.file_id"
   )
     .It.flex.y_start.mb_3
       img(
@@ -185,16 +192,18 @@ export default {
     },
 
     folders_move() {
-      this.$socket.sendObj({
-        cmd: 'folders_move',
-        target_folder_id: this.target_folder_id,
-        folder_id: this.$route.query.id
-      })
+      // this.$socket.sendObj({
+      //   cmd: 'folders_move'
+      //   // target_folder_id: this.target_folder_id,
+      //   // folder_id: this.$route.query.id
+      // })
     },
+    folders_copy() {},
+    folder_share() {},
 
-    folder_rename() {
+    folders_rename() {
       this.$socket.sendObj({
-        cmd: 'folder_rename',
+        cmd: 'folders_rename',
         foldername: this.foldername,
         folder_id: this.$route.query.id
       })

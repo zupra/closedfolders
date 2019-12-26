@@ -1,6 +1,6 @@
 <template lang="pug">
 .grid
-
+  NOTICE
   Modal(
     :show.sync="showModal_folderCreate",
     mod="SM toCenter",
@@ -14,7 +14,7 @@
       )
     .flex.x_end.y_center(slot="actions")
       .btn.lg(
-        @click="folder_create(); showModal_folderCreate = false"
+        @click="folders_create(); showModal_folderCreate = false"
       ) new Folder
 
 
@@ -30,7 +30,7 @@
         id="dropzone"
         :options="dropzoneOptions"
         :duplicateCheck="true"
-        @vdropzone-complete="fileUpload_complete"
+        @vdropzone-error="dropzone_error"
       )
     .flex.x_end.y_center(slot="actions")
       .btn.lg(
@@ -202,10 +202,66 @@
 </template>
 
 <script>
+const nav = [
+  {
+    icon: 'inbox',
+    name: 'Files',
+    dscr: 'Your files and folders',
+    link: '/'
+  },
+  {
+    icon: 'share-2',
+    name: 'Shares',
+    dscr: 'Your shared folders',
+    link: '/'
+  },
+  {
+    icon: 'folder-plus',
+    name: 'Folder',
+    dscr: 'create new folder',
+    link: '/'
+  },
+  {
+    icon: 'upload',
+    name: 'Upload',
+    dscr: 'Upload new files',
+    link: '/'
+  }
+]
+
+const navInner = [
+  {
+    icon: 'settings',
+    name: 'General',
+    link: '/account'
+  },
+  {
+    icon: 'shield',
+    name: 'Security',
+    link: '/account/security'
+  },
+  {
+    icon: 'sliders',
+    name: 'Plan',
+    link: '/account/plan'
+  },
+  {
+    icon: 'credit-card',
+    name: 'Billing',
+    link: '/account/billing'
+  },
+  {
+    icon: 'log-out',
+    name: 'LogOut',
+    link: '/'
+  }
+]
+
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 
 import { mapState } from 'vuex'
+import NOTICE from '~/components/NOTICE.vue'
 import Modal from '~/components/Modal/Modal.vue'
 
 export default {
@@ -226,6 +282,7 @@ export default {
   */
 
   components: {
+    NOTICE,
     Modal,
     vueDropzone: vue2Dropzone
   },
@@ -235,7 +292,10 @@ export default {
         // url: `https://closedfolders.com/upload/?folder_id=59&hash=${localStorage.token}`,
         // url: 'https://httpbin.org/post',
         url: 'https://closedfolders.com/upload/',
+        // headers: { "X-CSRF-TOKEN": document.head.querySelector("[name=csrf-token]").content }
+        headers: { 'Content-Type': 'image/jpeg' },
         addRemoveLinks: true,
+        removeFile: true,
         thumbnailWidth: 150,
         thumbnailHeight: 150,
         chunking: true
@@ -244,64 +304,13 @@ export default {
         // headers: { "My-Awesome-Header": "header value" }
       },
       showSidebar: false,
+      subNavIsOpen: false,
       showModal_folderCreate: false,
       showModal_fileUpload: false,
-      subNavIsOpen: false,
-      nav: [
-        {
-          icon: 'inbox',
-          name: 'Files',
-          dscr: 'Your files and folders',
-          link: '/'
-        },
-        {
-          icon: 'share-2',
-          name: 'Shares',
-          dscr: 'Your shared folders',
-          link: '/'
-        },
-        {
-          icon: 'folder-plus',
-          name: 'Folder',
-          dscr: 'create new folder',
-          link: '/'
-        },
-        {
-          icon: 'upload',
-          name: 'Upload',
-          dscr: 'Upload new files',
-          link: '/'
-        }
-      ],
+      foldername: '',
 
-      navInner: [
-        {
-          icon: 'settings',
-          name: 'General',
-          link: '/account'
-        },
-        {
-          icon: 'shield',
-          name: 'Security',
-          link: '/account/security'
-        },
-        {
-          icon: 'sliders',
-          name: 'Plan',
-          link: '/account/plan'
-        },
-        {
-          icon: 'credit-card',
-          name: 'Billing',
-          link: '/account/billing'
-        },
-        {
-          icon: 'log-out',
-          name: 'LogOut',
-          link: '/'
-        }
-      ],
-      foldername: ''
+      nav: nav,
+      navInner: navInner
     }
   },
   computed: {
@@ -310,42 +319,69 @@ export default {
       return this.socket.isConnected
     }
   },
-
   watch: {
-    isConnected(newVal) {
-      if (!newVal) this.$router.replace('/login')
+    isConnected(connect) {
+      if (!connect) {
+        // localStorage.removeItem(token)
+        localStorage.token = ''
+        this.$router.replace('/login')
+      }
     }
   },
 
   beforeMount() {
-    // console.log('######options', this.$options.sockets)
-    // this.$disconnect()
+    // console.log('# options', this.$options.sockets)
+    // console.log('# socket', this.$socket)
+    // console.log('# connect', this.$connect)
+
+    if (!this.isConnected && localStorage.token) {
+      this.$connect(
+        `wss://closedfolders.com:8001/?hash=${localStorage.token}`,
+        {
+          format: 'json',
+          reconnection: true,
+          reconnectionAttempts: 3,
+          reconnectionDelay: 3000,
+          store: this.$store
+        }
+      )
+    } else {
+      console.log('!(isConnected && token)')
+    }
 
     this.$options.sockets.onopen = () =>
       this.$socket.sendObj({ cmd: 'folders' })
 
-    this.$options.sockets.onclose = (data) => {
-      this.$notice('disconnect', 'disconnect')
-      this.$router.replace('/login')
+    this.$options.sockets.onclose = ({ data }) => console.info('onclose', data)
+
+    // this.$options.sockets.onmessage = (data) => console.info('INFO', data.data)
+    this.$options.sockets.onmessage = function({ data }) {
+      console.info('def onmessage', data)
+      data && this.$notice('sockets', 'msg')
     }
-    // this.$connect(`wss://closedfolders.com:8001/?hash=${localStorage.token}`)
-    this.$options.sockets.onmessage = (data) => console.info('INFO', data.data)
   },
 
   methods: {
-    fileUpload_complete(file) {
-      console.log(file)
+    // >>> dropzone
+    dropzone_error(file, message, xhr) {
+      // console.log(file, message, xhr)
+      console.log(message)
+      this.$notice('File upload', message, 'error')
     },
-    sendingEvent (file, xhr, formData) {
-      formData.append('folder_id', 59);
-      formData.append('hash', localStorage.token);
+    sendingEvent(file, xhr, formData) {
+      formData.append('folder_id', 59)
+      formData.append('hash', localStorage.token)
     },
-    folder_create() {
+    // <<< dropzone
+    folders_create() {
       this.$socket.sendObj({
-        cmd: 'folder_create',
+        cmd: 'folders_create',
         foldername: this.foldername,
         folder_id: null
       })
+      // this.$socket.sendObj({ cmd: 'folders' })
+      // this.$options.sockets.onmessage = (data) =>
+      //   (this.folders = JSON.parse(data.data))
     }
   }
 }
